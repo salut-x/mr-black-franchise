@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .astro/
+public/3D/
 
 .DS_Store
 **/.DS_Store
@@ -8,4 +9,3 @@ dist/
 .env
 .env.*
 !.env.example
-
