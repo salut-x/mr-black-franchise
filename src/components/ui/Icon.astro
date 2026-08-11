@@ -1,0 +1,50 @@
+---
+interface Props {
+	name: string
+	class?: string
+	title?: string
+}
+
+const { name, class: className, title } = Astro.props
+
+const icons = import.meta.glob('../../assets/icons/*.svg', {
+	eager: true,
+	query: '?raw',
+	import: 'default',
+}) as Record<string, string>
+
+const icon = icons[`../../assets/icons/${name}.svg`]
+
+if (!icon) {
+	throw new Error(`Unknown icon: ${name}`)
+}
+
+const iconMarkup = icon
+	.replace(
+		'<svg',
+		`<svg class="icon__svg"${title ? ` role="img" aria-label="${title}"` : ''}`,
+	)
+	.replace(
+		/<(path|circle|rect|line|polyline|polygon|ellipse)(?![^>]*\bclass=)/g,
+		'<$1 class="icon__shape"',
+	)
+---
+
+<span
+	class:list={['icon', className]}
+	aria-hidden={title ? undefined : 'true'}
+	set:html={iconMarkup}
+/>
+
+<style>
+	.icon {
+		display: inline-flex;
+		flex: none;
+		line-height: 0;
+	}
+
+	.icon :global(.icon__svg) {
+		width: 100%;
+		height: 100%;
+	}
+</style>

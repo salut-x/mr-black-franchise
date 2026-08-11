@@ -1,0 +1,75 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'a'> {
+	href: string
+	underline?: boolean
+}
+
+const {
+	href,
+	label,
+	class: className,
+	underline = false,
+	target,
+	rel,
+	...attributes
+} = Astro.props
+
+const safeRel = target === '_blank' && !rel ? 'noopener noreferrer' : rel
+---
+
+<a
+	{href}
+	{target}
+	rel={safeRel}
+	class:list={['link', 'txt-menu', { 'link--underlined': underline }, className]}
+	{...attributes}
+>
+	{label}
+</a>
+
+<style lang='scss'>
+	.link {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		width: fit-content;
+		color: inherit;
+		text-decoration: none;
+		transition-property: color, opacity;
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: 0;
+			bottom: 0em;
+			width: 100%;
+			height: 1.6px;
+			background-color: currentColor;
+			transform: scaleX(0);
+			transform-origin: right;
+			transition: transform var(--transition-duration-longer) ease;
+		}
+
+		&:hover::after {
+			transform: scaleX(1);
+			transform-origin: left;
+		}
+
+		&--underlined::after {
+			transform: scaleX(1);
+			transform-origin: left;
+		}
+
+		&--underlined:hover::after {
+			transform: scaleX(0);
+			transform-origin: right;
+		}
+
+		&:focus-visible {
+			outline: 2px dashed currentColor;
+			outline-offset: 4px;
+		}
+	}
+</style>

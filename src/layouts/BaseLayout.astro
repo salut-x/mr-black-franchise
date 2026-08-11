@@ -1,0 +1,30 @@
+---
+import Head from '@/components/partials/Head.astro'
+import Header from '@/components/partials/Header.astro'
+import Footer from '@/components/partials/Footer.astro'
+
+interface Props {
+	title?: string
+	description?: string
+}
+
+const { title = 'Astro Starter', description = '' } = Astro.props
+---
+
+<html
+	class='page'
+	id='top'
+	lang='ru'
+>
+	<Head title={title} description={description} />
+	<body class='page__body'>
+		<Header />
+		<main
+			class='page__main'
+			id='main-content'
+		>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

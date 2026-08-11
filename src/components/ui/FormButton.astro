@@ -1,0 +1,99 @@
+---
+import type { ButtonHTMLAttributes } from 'astro/types'
+import Icon from './Icon.astro'
+
+interface Props extends ButtonHTMLAttributes {
+	label: string
+	type?: 'button' | 'submit' | 'reset'
+}
+
+const { label, type = 'submit', class: className, ...attributes } = Astro.props
+---
+
+<button
+	type={type}
+	class:list={['form-button', className]}
+	{...attributes}
+>
+	<span class='form-button__label txt-btn'>{label}</span>
+	<Icon
+		name='btn-arrow'
+		class='form-button__icon form-button__icon--start'
+	/>
+	<Icon
+		name='btn-arrow'
+		class='form-button__icon form-button__icon--end'
+	/>
+</button>
+
+<style lang='scss'>
+	.form-button {
+		position: relative;
+		display: flex;
+		width: 100%;
+		min-height: 51px;
+		padding-inline: 20px;
+		border: none;
+		background-color: var(--color-black);
+		color: var(--color-white);
+		cursor: pointer;
+
+		&__label {
+			position: absolute;
+			left: 20px;
+			top: 55%;
+			transform: translateY(-50%);
+			transition: transform var(--transition-duration-longer) cubic-bezier(0.22, 1, 0.36, 1);
+		}
+
+		:global(.form-button__icon) {
+			position: absolute;
+			right: 20px;
+			top: 50%;
+			width: 9px;
+			height: 15px;
+			transform: translateY(-50%);
+		}
+
+		:global(.form-button__icon--start) {
+			left: 20px;
+			opacity: 0;
+			transform: translate(-12px, -50%);
+			transition:
+				transform var(--transition-duration-longer) cubic-bezier(0.22, 1, 0.36, 1),
+				opacity 160ms ease;
+		}
+
+		:global(.form-button__icon--end) {
+			opacity: 1;
+			transition:
+				transform var(--transition-duration-longer) cubic-bezier(0.22, 1, 0.36, 1),
+				opacity 160ms ease;
+		}
+
+		&:hover:not(:disabled) &__label {
+			transform: translate(21px, -50%);
+		}
+
+		&:hover:not(:disabled) :global(.form-button__icon--start) {
+			opacity: 1;
+			transform: translateY(-50%);
+			transition-delay: 120ms;
+		}
+
+		&:hover:not(:disabled) :global(.form-button__icon--end) {
+			opacity: 0;
+			transform: translate(12px, -50%);
+		}
+
+		&:focus-visible {
+			outline: 2px dashed currentColor;
+			outline-offset: 4px;
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+</style>

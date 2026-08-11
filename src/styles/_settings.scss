@@ -1,0 +1,114 @@
+@use './helpers' as *;
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html {
+  box-sizing: border-box;
+  background-color: var(--color-ivory);
+  scrollbar-gutter: stable;
+  -webkit-tap-highlight-color: transparent;
+
+  &.is-lock {
+    overflow: hidden;
+  }
+}
+
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-height: 100vh;
+
+	&::before {
+		content: '';
+		position: fixed;
+		z-index: 2147483647;
+		inset: -80px;
+		background-image: url('/images/noise.svg');
+		background-repeat: repeat;
+		background-size: 80px 80px;
+		pointer-events: none;
+		animation: global-noise 0.5s steps(1, end) infinite;
+	}
+}
+
+@keyframes global-noise {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+
+	20% {
+		transform: translate3d(-9px, 6px, 0);
+	}
+
+	40% {
+		transform: translate3d(7px, -11px, 0);
+	}
+
+	60% {
+		transform: translate3d(12px, 8px, 0);
+	}
+
+	80% {
+		transform: translate3d(-6px, -7px, 0);
+	}
+}
+
+.page__main {
+  flex-grow: 1;
+}
+
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+}
+
+// trasition
+a,
+button,
+label,
+input,
+textarea,
+select,
+svg * {
+  transition-duration: var(--transition-duration);
+}
+
+a, button {
+  white-space: nowrap;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+
+  &[class] {
+    text-decoration: none;
+  }
+  :focus-visible {
+    @include focus-visible;
+  }
+}
+
+dialog {
+  padding: 0;
+  margin: 0;
+  border: none;
+}

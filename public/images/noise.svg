@@ -1,0 +1,79 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>
+	<filter
+		id='noise'
+		x='0'
+		y='0'
+		width='100%'
+		height='100%'
+		color-interpolation-filters='sRGB'
+	>
+		<feTurbulence
+			type='fractalNoise'
+			baseFrequency='0.5'
+			numOctaves='1'
+			seed='8'
+			stitchTiles='stitch'
+			result='noise-source'
+		/>
+		<feColorMatrix
+			in='noise-source'
+			type='matrix'
+			values='
+				0 0 0 0 0
+				0 0 0 0 0
+				0 0 0 0 0
+				0.2126 0.7152 0.0722 0 0
+			'
+			result='noise-luma'
+		/>
+		<feComponentTransfer
+			in='noise-luma'
+			result='black-mask'
+		>
+			<feFuncA
+				type='discrete'
+				tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1'
+			/>
+		</feComponentTransfer>
+		<feComponentTransfer
+			in='noise-luma'
+			result='white-mask'
+		>
+			<feFuncA
+				type='discrete'
+				tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0'
+			/>
+		</feComponentTransfer>
+		<feFlood
+			flood-color='#000000'
+			flood-opacity='0.1'
+			result='black-color'
+		/>
+		<feComposite
+			in='black-color'
+			in2='black-mask'
+			operator='in'
+			result='black-noise'
+		/>
+		<feFlood
+			flood-color='#ffffff'
+			flood-opacity='0.25'
+			result='white-color'
+		/>
+		<feComposite
+			in='white-color'
+			in2='white-mask'
+			operator='in'
+			result='white-noise'
+		/>
+		<feMerge>
+			<feMergeNode in='black-noise'/>
+			<feMergeNode in='white-noise'/>
+		</feMerge>
+	</filter>
+	<rect
+		width='160'
+		height='160'
+		filter='url(#noise)'
+	/>
+</svg>

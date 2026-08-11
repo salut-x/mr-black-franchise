@@ -1,0 +1,117 @@
+---
+import type { InputHTMLAttributes } from 'astro/types'
+
+interface Props extends InputHTMLAttributes {
+	name: string
+}
+
+const { name, id = name, class: className, ...attributes } = Astro.props
+---
+
+<label
+	class:list={['checkbox', className]}
+	for={id}
+>
+	<input
+		id={id}
+		name={name}
+		type='checkbox'
+		class='checkbox__control'
+		{...attributes}
+	/>
+	<span
+		class='checkbox__box'
+		aria-hidden='true'
+	>
+		<svg
+			class='checkbox__check'
+			width='11'
+			height='11'
+			viewBox='0 0 11 11'
+			fill='none'
+			xmlns='http://www.w3.org/2000/svg'
+		>
+			<path
+				class='checkbox__check-path'
+				d='M9.16634 2.75L4.12467 7.79167L1.83301 5.5'
+				stroke='white'
+				stroke-width='1.5'
+			>
+			</path>
+		</svg>
+	</span>
+	<span class='checkbox__label txt-btn'><slot /></span>
+</label>
+
+<style lang='scss'>
+	.checkbox {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		width: fit-content;
+		cursor: pointer;
+		min-height: 21px;
+
+		&__control {
+			appearance: none;
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			margin: -1px;
+			padding: 0;
+			border: 0;
+			clip-path: inset(50%);
+			overflow: hidden;
+		}
+
+		&__box {
+			position: relative;
+			display: grid;
+			place-items: center;
+			width: 15px;
+			height: 15px;
+			border: 1px solid color-mix(in srgb, var(--color-black) 50%, transparent);
+			background-color: transparent;
+			flex: none;
+		}
+
+		&__check {
+			position: absolute;
+			z-index: 1;
+			top: 50%;
+			left: 50%;
+			color: var(--color-white);
+			opacity: 0;
+			transform: translate(-50%, -50%);
+			transition: opacity 0.15s ease;
+		}
+
+		&__check-path {
+			stroke: var(--color-white) !important;
+		}
+
+		&__label {
+			display: inline-flex;
+			align-items: center;
+			translate: 0 2px;
+		}
+
+		:global(.checkbox__link) {
+			text-decoration: none !important;
+		}
+
+		&__control:checked + &__box {
+			border-color: var(--color-black);
+			background-color: var(--color-black);
+		}
+
+		&__control:checked + &__box &__check {
+			opacity: 1;
+		}
+
+		&__control:focus-visible + &__box {
+			outline: 2px dashed currentColor;
+			outline-offset: 3px;
+		}
+	}
+</style>

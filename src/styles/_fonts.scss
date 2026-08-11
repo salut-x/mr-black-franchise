@@ -1,0 +1,5 @@
+@use './helpers' as *;
+
+@include font-face("Inter Tight", "InterTight-Regular", normal, normal);
+@include font-face("Courier Prime", "CourierPrime-Regular", normal, normal);
+@include font-face("Unbounded", "Unbounded-ExtraBold", bold, normal);

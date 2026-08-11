@@ -1,0 +1,739 @@
+---
+import {
+	footerContacts,
+	footerCredits,
+	footerLegalLinks,
+	footerPartnerEmail,
+	footerSocialLinks,
+} from '@/data/footer.js'
+import { languages } from '@/data/languages.js'
+import { mainNavigation } from '@/data/navigation.js'
+import Button from '../ui/Button.astro'
+import Icon from '../ui/Icon.astro'
+import Link from '../ui/Link.astro'
+
+const footerNavigation = mainNavigation.filter(({ href }) => href !== '#contacts')
+const [phoneContact, emailContact, addressContact] = footerContacts
+---
+
+<footer class='footer' data-js-footer>
+	<div class='footer__inner container'>
+		<div class='footer__contacts'>
+			<div class='footer__phone-group'>
+				<div class='footer__contact'>
+					<span class='footer__caption'>{phoneContact.label}</span>
+					<a
+						class='footer__contact-value'
+						href={phoneContact.href}
+					>
+						{phoneContact.value}
+					</a>
+				</div>
+
+				<Button
+					class='footer__callback'
+					labelClass='footer__callback-label'
+					label='Заказать обратный звонок'
+				/>
+			</div>
+
+			<div class='footer__contact'>
+				<span class='footer__caption'>{emailContact.label}</span>
+				<Link
+					class='footer__contact-value'
+					href={emailContact.href}
+					label={emailContact.value}
+				/>
+			</div>
+
+			<div class='footer__contact footer__contact--address'>
+				<span class='footer__caption'>{addressContact.label}</span>
+				<a
+					class='footer__contact-value footer__contact-value--address'
+					href={addressContact.href}
+				>
+					{addressContact.value}
+				</a>
+			</div>
+		</div>
+
+		<div class='footer__center'>
+			<Link
+				class='footer__top-link'
+				href='#top'
+				label='Вернуться наверх'
+				underline={true}
+			/>
+
+			<a
+				class='footer__logo-link'
+				href='/'
+				aria-label='На главную'
+			>
+				<Icon
+					name='logo'
+					class='footer__logo-icon'
+				/>
+			</a>
+
+			<p class='footer__message'>
+				<span class='footer__message-line footer__message-text'>
+					Давайте строить бизнес
+				</span>
+				<span class='footer__message-line'>
+					<span class='footer__message-text'>вместе.</span><Link
+						class='footer__message-link'
+						href={footerPartnerEmail.href}
+						label={footerPartnerEmail.label}
+					/>
+				</span>
+			</p>
+		</div>
+
+		<div class='footer__navigation'>
+			<div
+				class='footer__languages'
+				aria-label='Выбор языка'
+			>
+				{languages.map((language, index) => (
+					<>
+						<Link
+							class:list={[
+								'footer__language',
+								{ 'is-active': language.isActive },
+							]}
+							href={language.href}
+							label={language.label}
+							aria-current={language.isActive ? 'page' : undefined}
+						/>
+						{index < languages.length - 1 && (
+							<span class='footer__language-divider' aria-hidden='true'>/</span>
+						)}
+					</>
+				))}
+			</div>
+
+			<div class='footer__nav-group footer__nav-group--menu'>
+				<span class='footer__caption'>Меню</span>
+				<nav
+					class='footer__nav'
+					aria-label='Навигация в футере'
+				>
+					<ul class='footer__link-list'>
+						{footerNavigation.map(item => (
+							<li class='footer__link-item'>
+								<Link
+									class='footer__nav-link'
+									href={item.href}
+									label={item.label}
+								/>
+							</li>
+						))}
+					</ul>
+				</nav>
+			</div>
+
+			<div class='footer__nav-group footer__nav-group--social'>
+				<span class='footer__caption'>Соц сети</span>
+				<ul class='footer__link-list'>
+					{footerSocialLinks.map(item => (
+						<li class='footer__link-item'>
+							<Link
+								class='footer__nav-link'
+								href={item.href}
+								label={item.label}
+							/>
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
+
+		<div class='footer__credits'>
+			{footerCredits.map(item => (
+				<p class='footer__credit'>
+					<span class='footer__credit-label'>{item.label}</span>{' '}
+					<Link
+						class='footer__credit-link'
+						href={item.href}
+						label={item.partner}
+						underline={true}
+					/>
+				</p>
+			))}
+		</div>
+
+		<div class='footer__brand'>
+			<div class='footer__wordmark-wrap'>
+				<!-- Невидимая копия задаёт финальный размер области, как у Studio Namma. -->
+				<img
+					class='footer__wordmark-fill'
+					data-js-footer-wordmark-fill
+					src='/footer-line.svg'
+					alt=''
+					aria-hidden='true'
+				/>
+				<div class='footer__wordmark-stretch'>
+					<img
+						class='footer__wordmark-svg'
+						data-js-footer-wordmark
+						src='/footer-line.svg'
+						alt='Mr.BLACK'
+					/>
+				</div>
+			</div>
+			<img
+				class='footer__cup'
+				src='/cup.svg'
+				alt=''
+			/>
+		</div>
+
+		<div class='footer__legal' data-js-footer-legal>
+			<Link
+				class='footer__legal-link footer__legal-link--personal'
+				href={footerLegalLinks[0].href}
+				label={footerLegalLinks[0].label}
+			/>
+			<span class='footer__copyright'>© 2026 Mr.Black</span>
+			<Link
+				class='footer__legal-link footer__legal-link--privacy'
+				href={footerLegalLinks[1].href}
+				label={footerLegalLinks[1].label}
+			/>
+		</div>
+	</div>
+</footer>
+
+<style lang='scss'>
+	@use '../../styles/helpers' as *;
+
+	.footer {
+		--container-padding-x: 16px;
+
+		position: relative;
+		height: 1478px;
+		background-color: var(--color-black);
+		color: var(--color-orange);
+		font-family: var(--font-family-mono);
+		font-size: 15px;
+		font-weight: 400;
+		line-height: 110%;
+		letter-spacing: -0.03em;
+		text-transform: uppercase;
+		&__inner {
+			position: relative;
+			height: 100%;
+		}
+
+		&__contacts {
+			position: absolute;
+			z-index: 1;
+			top: 612px;
+			left: var(--container-padding-x);
+			display: flex;
+			flex-direction: column;
+			gap: 50px;
+			width: 285px;
+		}
+
+		&__phone-group {
+			display: flex;
+			flex-direction: column;
+			gap: 30px;
+		}
+
+		&__contact {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 15px;
+			width: fit-content;
+		}
+
+		&__contact--address {
+			max-width: 186px;
+		}
+
+		&__contact-value--address {
+			white-space: normal;
+		}
+
+		&__caption,
+		&__credit-label,
+		&__legal-link,
+		&__copyright {
+			opacity: 0.5;
+		}
+
+		&__contact-value,
+		&__legal-link {
+			color: inherit;
+		}
+
+		:global(.footer__contact-value),
+		:global(.footer__credit-link),
+		:global(.footer__legal-link),
+		:global(.footer__message-link) {
+			color: inherit;
+			line-height: inherit;
+		}
+
+		:global(.footer__legal-link) {
+			opacity: 0.5;
+		}
+
+		:global(.footer__message-link) {
+			color: var(--color-orange);
+			opacity: 1;
+		}
+
+		:global(.footer__callback) {
+			color: inherit;
+		}
+
+		&__center {
+			position: absolute;
+			z-index: 1;
+			top: 50px;
+			left: 50%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 50px;
+			width: 300px;
+			text-align: center;
+			transform: translateX(-50%);
+		}
+
+		:global(.footer__top-link) {
+			color: inherit;
+			line-height: inherit;
+			opacity: 0.5;
+		}
+
+		&__logo-link {
+			display: inline-flex;
+			width: 46px;
+			height: 46px;
+			color: inherit;
+		}
+
+		:global(.footer__logo-icon) {
+			width: 46px;
+			height: 46px;
+		}
+
+		&__message {
+			width: 100%;
+		}
+
+		&__message-line {
+			display: block;
+		}
+
+		&__message-text {
+			opacity: 0.5;
+		}
+
+		&__navigation {
+			position: absolute;
+			z-index: 1;
+			top: 337px;
+			left: var(--container-padding-x);
+			width: 269px;
+			height: 185px;
+		}
+
+		&__languages,
+		&__nav-group {
+			position: absolute;
+			width: 86px;
+		}
+
+		&__languages {
+			right: 0;
+			bottom: 0;
+			display: flex;
+			align-items: flex-start;
+			gap: 8px;
+		}
+
+		:global(.footer__language),
+		&__language-divider {
+			color: inherit;
+			line-height: inherit;
+			opacity: 0.5;
+		}
+
+		:global(.footer__language.is-active) {
+			opacity: 1;
+		}
+
+		&__nav-group {
+			top: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		&__nav-group--menu {
+			left: 0;
+		}
+
+		&__nav-group--social {
+			right: 0;
+		}
+
+		&__link-list {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 6px;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		&__link-item {
+			display: flex;
+		}
+
+		:global(.footer__nav-link) {
+			color: inherit;
+			line-height: inherit;
+		}
+
+		&__credits {
+			position: absolute;
+			z-index: 1;
+			top: 991px;
+			left: var(--container-padding-x);
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			width: 197px;
+		}
+
+		&__brand {
+			position: absolute;
+			z-index: 0;
+			top: 1141px;
+			left: var(--container-padding-x);
+			right: var(--container-padding-x);
+			height: 321px;
+		}
+
+		&__wordmark-wrap {
+			--footer-wordmark-height: 214px;
+
+			position: absolute;
+			z-index: 0;
+			top: 16px;
+			left: 0;
+			width: 100%;
+			height: var(--footer-wordmark-height);
+			overflow: hidden;
+		}
+
+		&__wordmark-fill,
+		&__wordmark-svg {
+			display: block;
+			width: 100%;
+			height: 100%;
+			max-width: none;
+			object-fit: fill;
+		}
+
+		&__wordmark-fill {
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		&__wordmark-stretch {
+			position: absolute;
+			inset: 0;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		&__wordmark-svg {
+			transform-origin: top center;
+			will-change: height;
+		}
+
+		&__cup {
+			position: absolute;
+			z-index: 1;
+			top: 0;
+			right: 7px;
+			display: block;
+			width: 127px;
+			height: auto;
+		}
+
+		&__legal {
+			position: absolute;
+			z-index: 1;
+			left: var(--container-padding-x);
+			bottom: 16px;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 12px;
+			width: 249px;
+		}
+
+		@include mobile-only {
+			&__legal-link--personal {
+				order: 1;
+			}
+
+			&__legal-link--privacy {
+				order: 2;
+			}
+
+			&__copyright {
+				order: 3;
+			}
+		}
+
+		@include tablet {
+			&__legal {
+				left: var(--container-padding-x);
+				right: var(--container-padding-x);
+				bottom: 0;
+				display: flex;
+				flex-direction: row;
+				align-items: flex-start;
+				justify-content: space-between;
+				gap: 24px;
+				width: auto;
+				padding-block: 20px;
+			}
+
+			&__copyright {
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&__legal-link--privacy {
+				margin-left: auto;
+				text-align: right;
+			}
+		}
+
+		@include tablet-only {
+			height: 100svh;
+
+			&__contacts {
+				top: 40px;
+				gap: 40px;
+			}
+
+			&__center {
+				top: 40px;
+				display: block;
+				width: 425px;
+				height: 434px;
+			}
+
+			:global(.footer__top-link) {
+				position: absolute;
+				top: 0;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&__logo-link {
+				position: absolute;
+				top: 185px;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&__message {
+				position: absolute;
+				top: 400px;
+				left: 0;
+			}
+
+			&__navigation {
+				top: 40px;
+				left: auto;
+				right: var(--container-padding-x);
+				width: 86px;
+				height: 434px;
+				text-align: right;
+			}
+
+			&__languages {
+				top: 0;
+				right: 0;
+				bottom: auto;
+				justify-content: flex-end;
+			}
+
+			&__nav-group {
+				align-items: flex-end;
+			}
+
+			&__nav-group--menu {
+				top: 119px;
+				left: auto;
+				right: 0;
+			}
+
+			&__nav-group--social {
+				top: auto;
+				right: 0;
+				bottom: 0;
+			}
+
+			&__link-list {
+				align-items: flex-end;
+			}
+
+			&__credits {
+				top: 434px;
+			}
+
+			&__brand {
+				top: calc(100svh - 284px);
+				height: 268px;
+			}
+
+			&__wordmark-wrap {
+				--footer-wordmark-height: 202px;
+
+				top: 29px;
+				height: var(--footer-wordmark-height);
+			}
+
+			&__wordmark-svg {
+				height: 0;
+			}
+
+			&__cup {
+				right: 54px;
+				width: 166px;
+			}
+
+		}
+
+		@include desktop {
+			--container-padding-x: 30px;
+
+			height: auto;
+
+			&__inner {
+				display: flow-root;
+			}
+
+			&__contacts {
+				top: 30px;
+			}
+
+			&__center {
+				top: 30px;
+				display: block;
+				width: 425px;
+				height: 434px;
+			}
+
+			:global(.footer__top-link) {
+				position: absolute;
+				top: 0;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&__logo-link {
+				position: absolute;
+				top: 185px;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&__message {
+				position: absolute;
+				top: 400px;
+				left: 0;
+			}
+
+			&__navigation {
+				top: 30px;
+				left: auto;
+				right: var(--container-padding-x);
+				width: 86px;
+				height: 434px;
+				text-align: right;
+			}
+
+			&__languages {
+				top: 0;
+				right: 0;
+				bottom: auto;
+				justify-content: flex-end;
+			}
+
+			&__nav-group {
+				align-items: flex-end;
+			}
+
+			&__nav-group--menu {
+				top: 119px;
+				left: auto;
+				right: 0;
+			}
+
+			&__nav-group--social {
+				top: auto;
+				right: 0;
+				bottom: 0;
+			}
+
+			&__link-list {
+				align-items: flex-end;
+			}
+
+			&__credits {
+				position: relative;
+				top: auto;
+				left: auto;
+				margin-top: 434px;
+			}
+
+			&__brand {
+				position: relative;
+				top: auto;
+				left: auto;
+				right: auto;
+				height: auto;
+				margin-top: 34px;
+				margin-bottom: 10px;
+				padding-top: 6px;
+				padding-bottom: 21px;
+			}
+
+			&__wordmark-wrap {
+				position: relative;
+				top: -20px;
+				height: auto;
+				aspect-ratio: 1560 / 509.09375;
+			}
+
+			&__wordmark-svg {
+				height: 0;
+			}
+
+			&__cup {
+				top: -40px;
+				right: 135px;
+				width: 320px;
+			}
+
+		}
+	}
+</style>

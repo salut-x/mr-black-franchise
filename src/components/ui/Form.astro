@@ -1,0 +1,70 @@
+---
+import type { FormHTMLAttributes } from 'astro/types'
+import CheckBox from './checkbox.astro'
+import FormButton from './FormButton.astro'
+import Input from './Input.astro'
+import Link from './Link.astro'
+
+interface Props extends FormHTMLAttributes {
+	submitLabel?: string
+}
+
+const {
+	submitLabel = 'Отправить',
+	class: className,
+	...attributes
+} = Astro.props
+---
+
+<form
+	class:list={['contact-form', className]}
+	{...attributes}
+>
+	<Input
+		label='Имя*'
+		name='name'
+		placeholder='Дмитрий'
+		required
+	/>
+	<Input
+		label='Почта*'
+		name='email'
+		type='email'
+		placeholder='mr.black@gmail.com'
+		required
+	/>
+	<Input
+		label='Телефон*'
+		name='phone'
+		type='tel'
+		placeholder='8 (931) 000 88 00'
+		required
+	/>
+	<Input
+		label='Город'
+		name='city'
+		placeholder='Москва'
+	/>
+	<CheckBox
+		name='consent'
+		required
+	>
+		Согласен с&nbsp;
+		<Link
+			href='/privacy-policy'
+			label='политикой конфиденциальности'
+			class='checkbox__link txt-btn'
+			underline={true}
+		/>
+	</CheckBox>
+	<FormButton label={submitLabel} />
+</form>
+
+<style lang='scss'>
+	.contact-form {
+		display: grid;
+		gap: 20px;
+		width: 100%;
+		color: var(--color-black);
+	}
+</style>

@@ -1,0 +1,61 @@
+---
+import type { InputHTMLAttributes } from 'astro/types'
+
+interface Props extends InputHTMLAttributes {
+	label: string
+	name: string
+}
+
+const {
+	label,
+	name,
+	id = name,
+	class: className,
+	type = 'text',
+	...attributes
+} = Astro.props
+---
+
+<label
+	class:list={['input-field', className]}
+	for={id}
+>
+	<span class='input-field__label txt-btn'>{label}</span>
+	<input
+		id={id}
+		name={name}
+		type={type}
+		class='input-field__control txt-btn'
+		{...attributes}
+	/>
+</label>
+
+<style lang='scss'>
+	.input-field {
+		display: grid;
+		gap: 24px;
+		width: 100%;
+		color: inherit;
+
+		&__control {
+			width: 100%;
+			padding: 0 0 21px;
+			border: none;
+			border-bottom: 1px dashed
+				color-mix(in srgb, var(--color-black) 30%, transparent);
+			border-radius: 0;
+			outline: none;
+			background: transparent;
+			color: inherit;
+
+			&::placeholder {
+				color: inherit;
+				opacity: 0.55;
+			}
+
+			&:focus-visible {
+				border-bottom: 1px dashed var(--color-black);
+			}
+		}
+	}
+</style>

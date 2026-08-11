@@ -1,0 +1,25 @@
+@use './helpers' as *;
+
+:root {
+  --color-black: #262626;
+	--color-green: #afab8e;
+	--color-orange: #df6341;
+	--color-brown: #a59171;
+	--color-ivory: #f3f1e9;
+	--color-white: #f9f7f7;
+
+  --font-family-base: 'Inter Tight', sans-serif;
+  --font-family-mono: 'Courier Prime', monospace;
+  --font-family-accent: 'Unbounded', sans-serif;
+
+  --container-width: #{fluid-to-laptop(
+    $container-desktop-width,
+    $container-laptop-width
+    )};
+
+  --container-padding-x: #{fluid(30,16)};
+  // --section-padding-y: #{fluid(100,40)};
+
+  --transition-duration: 0.3s;
+  --transition-duration-longer: 0.6s;
+}

@@ -1,0 +1,6 @@
+# https://securitytxt.org/
+# TODO: подставить реальный контакт и прод-домен перед деплоем
+Contact: mailto:security@vewoo.ai
+Preferred-Languages: ru, en
+Canonical: https://vewoo.ai/.well-known/security.txt
+Expires: 2027-01-01T00:00:00.000Z

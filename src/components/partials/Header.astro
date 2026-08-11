@@ -1,0 +1,306 @@
+---
+import { languages } from '@/data/languages.js'
+import { mainNavigation } from '@/data/navigation.js'
+import Icon from '../ui/Icon.astro'
+import ImageButton from '../ui/ImageButton.astro'
+import Link from '../ui/Link.astro'
+import MainMenu from '../ui/Menu.astro'
+
+interface Props {
+	theme?: 'light' | 'dark'
+}
+
+const { theme = 'light' } = Astro.props
+
+const contactsLink = mainNavigation.find(({ href }) => href === '#contacts')
+const desktopNavigation = mainNavigation.filter(({ href }) => href !== '#contacts')
+---
+
+<header class:list={['header', `header--${theme}`]}>
+	<div class='header__inner container'>
+		<nav
+			class='header__desktop-nav'
+			aria-label='Основная навигация'
+		>
+			<ul class='header__desktop-list'>
+				{
+					desktopNavigation.map(item => (
+						<li class='header__desktop-item'>
+							<Link
+								href={item.href}
+								label={item.label}
+							/>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		{
+			contactsLink && (
+				<nav
+					class='header__tablet-nav'
+					aria-label='Дополнительная навигация'
+				>
+					<ul class='header__tablet-list'>
+						<li>
+							<Link
+								href={contactsLink.href}
+								label={contactsLink.label}
+							/>
+						</li>
+						<li
+							class='header__languages'
+							aria-label='Выбор языка'
+						>
+							{languages.map((language, index) => (
+								<>
+									<Link
+										class:list={[
+											'header__language',
+											{ 'is-active': language.isActive }
+										]}
+										href={language.href}
+										label={language.label}
+										aria-current={language.isActive ? 'page' : undefined}
+									/>
+									{index < languages.length - 1 && (
+										<span aria-hidden='true'>/</span>
+									)}
+								</>
+							))}
+						</li>
+					</ul>
+				</nav>
+			)
+		}
+		<a
+			class='header__logo'
+			href='/'
+			aria-label='На главную'
+		>
+			<Icon
+				name='logo'
+				class='header__logo-image'
+			/>
+		</a>
+
+		<MainMenu />
+
+		<div class='header__desktop-actions'>
+			{
+				contactsLink && (
+					<div class='header__desktop-contact'>
+						<Link
+							href={contactsLink.href}
+							label={contactsLink.label}
+						/>
+					</div>
+				)
+			}
+
+			<div
+				class='header__desktop-languages txt-menu'
+				aria-label='Выбор языка'
+			>
+				{languages.map((language, index) => (
+					<>
+						<Link
+							class:list={[
+								'header__desktop-language',
+								{ 'is-active': language.isActive }
+							]}
+							href={language.href}
+							label={language.label}
+							aria-current={language.isActive ? 'page' : undefined}
+						/>
+						{index < languages.length - 1 && (
+							<span aria-hidden='true'>/</span>
+						)}
+					</>
+				))}
+			</div>
+
+			<ImageButton
+				class='header__contact-button'
+				label='Связаться'
+				theme={theme === 'dark' ? 'light' : 'dark'}
+			/>
+		</div>
+	</div>
+</header>
+
+<style lang='scss'>
+	@use '../../styles/helpers' as *;
+
+	.header {
+		position: sticky;
+		top: 0;
+		z-index: 20;
+		transition:
+			color var(--transition-duration),
+			background-color var(--transition-duration);
+
+		&--light {
+			// background-color: var(--color-ivory);
+			color: var(--color-black);
+		}
+
+		&--dark {
+			// background-color: var(--color-black);
+			color: var(--color-ivory);
+		}
+
+		&__inner {
+			min-height: 68px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
+		}
+		&__logo {
+			position: relative;
+			z-index: 3;
+			display: inline-flex;
+			color: inherit;
+		}
+
+		:global(.header:has(.main-menu.is-panel-visible)) &__logo {
+			color: var(--color-black);
+			transition: none;
+		}
+
+		:global(.header:has(.main-menu.is-panel-visible))
+			:global(.header__logo-image .icon__shape) {
+			transition: none;
+		}
+
+		:global(.header__logo-image) {
+			width: 41px;
+			height: 41px;
+			color: inherit;
+		}
+		&__tablet-nav {
+			display: none;
+		}
+
+		&__desktop-nav,
+		&__desktop-actions {
+			display: none;
+		}
+
+		&__tablet-list {
+			display: flex;
+			align-items: center;
+			gap: 24px;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		&__languages {
+			display: flex;
+			align-items: baseline;
+			gap: 8px;
+		}
+
+		:global(.header__language) {
+			padding: 0;
+			opacity: 0.4;
+		}
+
+		:global(.header__language.is-active) {
+			opacity: 1;
+		}
+
+		@include tablet-only {
+			&__inner {
+				position: relative;
+			}
+
+			&__tablet-nav {
+				display: block;
+			}
+
+			&__tablet-list {
+				gap: 40px;
+			}
+
+			&__logo {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+			:global(.header:has(.main-menu.is-panel-visible)) &__logo {
+				opacity: 0;
+				visibility: hidden;
+				pointer-events: none;
+			}
+
+			:global(.main-menu) {
+				margin-left: auto;
+			}
+		}
+
+		@include desktop {
+			&__inner {
+				position: relative;
+				align-items: flex-start;
+				min-height: 65px;
+				padding-top: 20px;
+			}
+
+			&__desktop-nav {
+				display: block;
+			}
+
+			&__desktop-list {
+				display: flex;
+				align-items: center;
+				gap: 40px;
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+
+			:global(.header__desktop-item) {
+				display: flex;
+			}
+
+			&__logo {
+				position: absolute;
+				top: 20px;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&__desktop-actions {
+				display: flex;
+				align-items: flex-start;
+				gap: 40px;
+				margin-left: auto;
+			}
+
+			&__desktop-languages {
+				display: flex;
+				align-items: flex-start;
+				gap: 8px;
+			}
+
+			:global(.header__desktop-contact) {
+				display: flex;
+			}
+
+			:global(.header__desktop-language) {
+				padding: 0;
+				opacity: 0.4;
+			}
+
+			:global(.header__desktop-language.is-active) {
+				opacity: 1;
+			}
+		}
+	}
+</style>

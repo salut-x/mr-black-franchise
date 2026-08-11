@@ -1,0 +1,197 @@
+---
+import Accordion from '@/components/ui/Accordion.astro'
+import Button from '@/components/ui/Button.astro'
+import Form from '@/components/ui/Form.astro'
+import FormButton from '@/components/ui/FormButton.astro'
+import ImageButton from '@/components/ui/ImageButton.astro'
+import Link from '@/components/ui/Link.astro'
+import Layout from '@/layouts/BaseLayout.astro'
+---
+
+<Layout
+	title='ui-kit'
+	description='Базоединая библиотека готовых элементов интерфейса: кнопок, полей, карточек, иконок и других компонентов'
+>
+	<!-- Typography -->
+	<section class='ui-kit'>
+		<div class='ui-kit__inner container'>
+			<div class='ui-kit__section'>
+				<div class='ui-kit__title'>TYPOGRAPHY</div>
+				<h1 class='h1'>H1</h1>
+				<h2 class='h2'>H2</h2>
+				<h3 class='h3'>H3</h3>
+				<h4 class='h4'>H4</h4>
+				<h5 class='h5'>H1</h5>
+				<h6 class='h6'>H2</h6>
+				<span class='h7'>H3</span>
+				<p class='body-txt'>body-txt</p>
+				<p class='txt-bold'>txt-bold</p>
+				<p class='txt-big'>txt-big</p>
+				<p class='txt-md'>txt-md</p>
+				<p class='descriptor'>descriptor</p>
+				<p class='txt-menu'>txt-menu</p>
+				<p class='txt-btn'>Оставить заявку</p>
+			</div>
+		</div>
+	</section>
+	<!-- Links & Buttons -->
+	<section class='ui-kit'>
+		<div class='ui-kit__inner container'>
+			<div class='ui-kit__section'>
+				<div class='ui-kit__title'>Links & Buttons</div>
+				<Link
+					href='/'
+					label='Link'
+				/>
+				<Link
+					href='/'
+					label='Link blank'
+					target='_blank'
+				/>
+				<Link
+					href='/'
+					label='Link underlined'
+					underline={true}
+				/>
+				<Button label='Оставить заявку' />
+				<FormButton label='Отправить' />
+				<ImageButton label='Связаться' />
+				<ImageButton
+					label='Связаться'
+					theme='dark'
+				/>
+			</div>
+		</div>
+	</section>
+	<!-- Form -->
+	<section class='ui-kit'>
+		<div class='ui-kit__inner container'>
+			<div class='ui-kit__section'>
+				<div class='ui-kit__title'>Form</div>
+				<Form />
+			</div>
+		</div>
+	</section>
+	<!-- Accordion -->
+	<section class='ui-kit ui-kit--black'>
+		<div class='ui-kit__inner container'>
+			<div class='ui-kit__section'>
+				<div class='ui-kit__title ui-kit__title--black'>Accordion</div>
+				<div
+					class='accordion-list'
+					data-js-accordion-list
+				>
+					<Accordion
+						number='06.'
+						title='Какие сроки запуска проекта?'
+					>
+						<p>
+							Сроки зависят от задачи и состава работ. После обсуждения
+							подготовим поэтапный план и календарь запуска.
+						</p>
+					</Accordion>
+					<Accordion
+						number='05.'
+						title='Можно ли масштабировать точку, если со временем трафик вырастет?'
+					>
+						<p>
+							Да, точка полностью адаптирована к масштабированию. Модульная
+							конструкция оборудования и готовые стандарты позволяют легко
+							увеличить пропускную способность при росте трафика.
+						</p>
+					</Accordion>
+					<Accordion
+						number='06.'
+						title='Какие сроки запуска проекта?'
+					>
+						<p>
+							Сроки зависят от задачи и состава работ. После обсуждения
+							подготовим поэтапный план и календарь запуска.
+						</p>
+					</Accordion>
+					<Accordion
+						number='06.'
+						title='Какие сроки запуска проекта?'
+					>
+						<p>
+							Сроки зависят от задачи и состава работ. После обсуждения
+							подготовим поэтапный план и календарь запуска.
+						</p>
+					</Accordion>
+					<Accordion
+						number='05.'
+						title='Можно ли масштабировать точку, если со временем трафик вырастет?'
+					>
+						<p>
+							Да, точка полностью адаптирована к масштабированию. Модульная
+							конструкция оборудования и готовые стандарты позволяют легко
+							увеличить пропускную способность при росте трафика.
+						</p>
+					</Accordion>
+					<Accordion
+						number='07.'
+						title='Можно ли адаптировать решение под бренд?'
+					>
+						<p>
+							Да, настроим визуальный стиль, коммуникацию и интерфейсные
+							материалы под особенности вашего бренда.
+						</p>
+					</Accordion>
+					<Accordion
+						number='06.'
+						title='Какие сроки запуска проекта?'
+					>
+						<p>
+							Сроки зависят от задачи и состава работ. После обсуждения
+							подготовим поэтапный план и календарь запуска.
+						</p>
+					</Accordion>
+					<Accordion
+						number='05.'
+						title='Можно ли масштабировать точку, если со временем трафик вырастет?'
+					>
+						<p>
+							Да, точка полностью адаптирована к масштабированию. Модульная
+							конструкция оборудования и готовые стандарты позволяют легко
+							увеличить пропускную способность при росте трафика.
+						</p>
+					</Accordion>
+				</div>
+			</div>
+		</div>
+	</section>
+</Layout>
+
+<style lang='scss'>
+	.ui-kit {
+		&__section {
+			display: flex;
+			flex-direction: column;
+			align-items: start;
+			row-gap: 40px;
+			padding-block: 80px;
+		}
+
+		&__title {
+			font-size: 12px;
+			opacity: 60%;
+			width: 100%;
+			border-bottom: 1px solid rgba($color: #000000, $alpha: 0.3);
+			padding-bottom: 8px;
+			margin-bottom: 40px;
+		}
+
+		&__title--black {
+			border-bottom: none;
+		}
+
+		&--black {
+			background-color: var(--color-black);
+			color: var(--color-ivory);
+		}
+	}
+
+	.accordion-list {
+		width: 100%;
+	}
+</style>

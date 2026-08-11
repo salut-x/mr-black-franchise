@@ -1,0 +1,45 @@
+// Mobile-first. Base styles target 0–767; mixins layer on for larger widths.
+// Ranges: 0–767 base · 768–1023 tablet · 1024+ desktop (design max 1920).
+$tablet: 768px;
+$desktop: 1024px;
+
+@mixin tablet {
+  // tablet and up (≥768)
+  @media (width >= $tablet) {
+    @content;
+  }
+}
+@mixin desktop {
+  // desktop and up (≥1024)
+  @media (width >= $desktop) {
+    @content;
+  }
+}
+@mixin tablet-only {
+  // 768–1023
+  @media (width >= $tablet) and (width < $desktop) {
+    @content;
+  }
+}
+@mixin mobile-only {
+  // 0–767
+  @media (width < $tablet) {
+    @content;
+  }
+}
+
+@mixin hover($hasActiveEffectOnMobile: true) {
+  @media (any-hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+
+  @if ($hasActiveEffectOnMobile) {
+    @media (any-hover: none) {
+      &:active {
+        @content;
+      }
+    }
+  }
+}
