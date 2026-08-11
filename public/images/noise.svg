@@ -1,10 +1,11 @@
 <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>
 	<filter
 		id='noise'
+		filterUnits='userSpaceOnUse'
 		x='0'
 		y='0'
-		width='100%'
-		height='100%'
+		width='160'
+		height='160'
 		color-interpolation-filters='sRGB'
 	>
 		<feTurbulence
@@ -31,8 +32,8 @@
 			result='black-mask'
 		>
 			<feFuncA
-				type='discrete'
-				tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1'
+				type='table'
+				tableValues='1 0.75 0.45 0.2 0.06 0 0 0 0'
 			/>
 		</feComponentTransfer>
 		<feComponentTransfer
@@ -40,13 +41,13 @@
 			result='white-mask'
 		>
 			<feFuncA
-				type='discrete'
-				tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0'
+				type='table'
+				tableValues='0 0 0 0 0.06 0.2 0.45 0.75 1'
 			/>
 		</feComponentTransfer>
 		<feFlood
 			flood-color='#000000'
-			flood-opacity='0.1'
+			flood-opacity='0.32'
 			result='black-color'
 		/>
 		<feComposite
@@ -57,7 +58,7 @@
 		/>
 		<feFlood
 			flood-color='#ffffff'
-			flood-opacity='0.25'
+			flood-opacity='0.42'
 			result='white-color'
 		/>
 		<feComposite

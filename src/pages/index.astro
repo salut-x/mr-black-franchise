@@ -1,4 +1,5 @@
 ---
+import Features from '@/components/partials/Features.astro'
 import Hero from '@/components/partials/Hero.astro'
 import Layout from '@/layouts/BaseLayout.astro'
 ---
@@ -6,8 +7,11 @@ import Layout from '@/layouts/BaseLayout.astro'
 <Layout
 	title='Mr.BLACK | Франшиза'
 	description='Откройте кофейню Mr.Black в своем городе и зарабатывайте от 1 000 000 ₽ в год с рентабельностью 31%.'
+	headerTheme='dark'
+	headerOverlay
 >
 	<Hero />
+	<Features />
 </Layout>
 
 <style lang='scss'></style>

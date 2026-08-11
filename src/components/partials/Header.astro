@@ -8,15 +8,24 @@ import MainMenu from '../ui/Menu.astro'
 
 interface Props {
 	theme?: 'light' | 'dark'
+	overlay?: boolean
 }
 
-const { theme = 'light' } = Astro.props
+const { theme = 'light', overlay = false } = Astro.props
 
 const contactsLink = mainNavigation.find(({ href }) => href === '#contacts')
-const desktopNavigation = mainNavigation.filter(({ href }) => href !== '#contacts')
+const desktopNavigation = mainNavigation.filter(
+	({ href }) => href !== '#contacts'
+)
 ---
 
-<header class:list={['header', `header--${theme}`]}>
+<header
+	class:list={[
+		'header',
+		`header--${theme}`,
+		{ 'header--overlay': overlay },
+	]}
+>
 	<div class='header__inner container'>
 		<nav
 			class='header__desktop-nav'
@@ -103,22 +112,24 @@ const desktopNavigation = mainNavigation.filter(({ href }) => href !== '#contact
 				class='header__desktop-languages txt-menu'
 				aria-label='Выбор языка'
 			>
-				{languages.map((language, index) => (
-					<>
-						<Link
-							class:list={[
-								'header__desktop-language',
-								{ 'is-active': language.isActive }
-							]}
-							href={language.href}
-							label={language.label}
-							aria-current={language.isActive ? 'page' : undefined}
-						/>
-						{index < languages.length - 1 && (
-							<span aria-hidden='true'>/</span>
-						)}
-					</>
-				))}
+				{
+					languages.map((language, index) => (
+						<>
+							<Link
+								class:list={[
+									'header__desktop-language',
+									{ 'is-active': language.isActive }
+								]}
+								href={language.href}
+								label={language.label}
+								aria-current={language.isActive ? 'page' : undefined}
+							/>
+							{index < languages.length - 1 && (
+								<span aria-hidden='true'>/</span>
+							)}
+						</>
+					))
+				}
 			</div>
 
 			<ImageButton
@@ -149,6 +160,12 @@ const desktopNavigation = mainNavigation.filter(({ href }) => href !== '#contact
 		&--dark {
 			// background-color: var(--color-black);
 			color: var(--color-ivory);
+		}
+
+		&--overlay {
+			position: absolute;
+			right: 0;
+			left: 0;
 		}
 
 		&__inner {
