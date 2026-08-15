@@ -14,6 +14,7 @@
 html {
   box-sizing: border-box;
   background-color: var(--color-ivory);
+  scroll-behavior: smooth;
   scrollbar-gutter: stable;
   -webkit-tap-highlight-color: transparent;
 

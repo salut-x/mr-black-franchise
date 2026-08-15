@@ -1,0 +1,309 @@
+---
+import MrPhone from '@/assets/images/digital/mr-phone.svg'
+import Phone from '@/assets/images/digital/phone.svg'
+import Benefits from '@/components/partials/Benefits.astro'
+import Button from '@/components/ui/Button.astro'
+import DigitalCard from '@/components/ui/DigitalCard.astro'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d${index + 1}`, title, description }))
+---
+
+<section
+	class='digital'
+	data-digital
+	data-header-theme='dark'
+>
+	<div class='digital__inner'>
+		<div class='digital__intro container'>
+			<div class='digital__header'>
+				<h2 class='digital__title h4'>{t.digital.title}</h2>
+				<p class='digital__description'>{t.digital.description}</p>
+			</div>
+			<div class='digital__media'>
+				<MrPhone class='digital__mr' />
+				<div class='digital__phone'>
+					<Phone class='digital__phone-shape' />
+					<video
+						class='digital__phone-video'
+						src='/smartphone.mp4'
+						autoplay
+						muted
+						loop
+						playsinline
+						preload='metadata'
+					>
+					</video>
+				</div>
+			</div>
+		</div>
+		<div class='digital__body'>
+			<div class='container'>
+				<ul class='digital__list'>
+					{
+						digital.map(card => (
+							<li class='digital__item'>
+								<DigitalCard {...card} />
+							</li>
+						))
+					}
+				</ul>
+				<div class='digital__action'>
+					<Button label={t.common.apply} />
+				</div>
+			</div>
+		</div>
+		<Benefits />
+	</div>
+</section>
+
+<style lang='scss'>
+	.digital {
+		position: relative;
+		z-index: 10;
+		background: var(--color-ivory);
+		padding-bottom: 60px;
+
+		@include mobile-only {
+			padding-bottom: 0;
+		}
+
+		@include tablet-only {
+			padding-bottom: 0;
+		}
+
+		&__inner {
+			display: grid;
+			place-items: center;
+			align-content: start;
+			min-height: 100vh;
+
+			@include mobile-only {
+				display: block;
+			}
+
+			@include tablet-only {
+				display: block;
+			}
+
+			@include desktop {
+				display: grid;
+				grid-template-columns: 9fr 3fr;
+				column-gap: 20px;
+				align-items: start;
+			}
+		}
+
+		&__intro {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			min-height: 100vh;
+
+			@include mobile-only {
+				position: sticky;
+				top: 0;
+				min-height: 100svh;
+			}
+
+			@include tablet-only {
+				position: sticky;
+				top: 0;
+				min-height: 100svh;
+			}
+
+			@include desktop {
+				position: sticky;
+				top: 0;
+				min-height: 100svh;
+			}
+		}
+
+		&__body {
+			width: 100%;
+			padding-bottom: 130px;
+			transition: opacity var(--transition-duration-longer) ease;
+
+			@include mobile-only {
+				position: relative;
+				z-index: 1;
+				background: var(--color-ivory);
+			}
+
+			@include tablet-only {
+				position: relative;
+				z-index: 1;
+				background: var(--color-ivory);
+			}
+		}
+
+		&__header {
+			display: grid;
+			row-gap: 20px;
+			padding-top: 80px;
+			transition: opacity var(--transition-duration-longer) ease;
+
+			@include desktop {
+				padding-top: 120px;
+			}
+		}
+
+    &__title {
+      max-width: 500px;
+    }
+
+		&__description {
+			@include tablet {
+				max-width: 480px;
+			}
+		}
+
+		&.is-ending &__header,
+		&.is-ending &__body {
+			opacity: 0;
+		}
+
+		&__list {
+			display: grid;
+			row-gap: 60px;
+			max-width: 370px;
+			margin-bottom: 80px;
+			padding-top: 40px;
+
+			@include tablet-only {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 60px 48px;
+				max-width: none;
+				min-height: auto;
+				margin-bottom: 66px;
+				padding-top: 64px;
+			}
+
+			@include desktop {
+				margin-top: 200px;
+				padding-top: 0;
+				row-gap: 100px;
+			}
+		}
+
+		&__item {
+			@include tablet-only {
+				&:nth-child(3) {
+					grid-column: 2;
+				}
+			}
+		}
+
+		&__action {
+			@include tablet-only {
+				margin-left: calc(50% + 24px);
+			}
+		}
+
+		&__media {
+			display: grid;
+			place-items: center;
+
+			@include desktop {
+				align-items: end;
+				margin-top: auto;
+				margin-left: calc(35% + 24px);
+			}
+		}
+
+		&__mr,
+		&__phone {
+			grid-area: 1 / 1;
+			max-width: 100%;
+		}
+
+		&__mr {
+			align-self: end;
+			width: auto;
+			height: fluid(545, 300);
+			transform: translateX(-60px);
+
+			@include mobile-only {
+				width: 168px;
+				height: auto;
+				transform: translateX(-75px);
+			}
+
+			@include tablet-only {
+				height: clamp(520px, 70vw, 620px);
+				transform: translateX(-100px);
+			}
+
+      @include desktop {
+        transform: translateX(-90px);
+      }
+		}
+
+		&__phone {
+			position: relative;
+			height: fluid(610, 336);
+			aspect-ratio: 348 / 610;
+			translate: calc(#{fluid(60, 42)} + 20px) -80px;
+			animation: digital-phone-sway 10s ease-in-out infinite;
+
+			@include desktop {
+				translate: calc(#{fluid(60, 42)} + 20px) -130px;
+			}
+
+			@include tablet-only {
+				height: clamp(580px, 78vw, 700px);
+				translate: calc(#{fluid(60, 42)} + 60px) -80px;
+			}
+		}
+
+		&__phone-shape {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+
+		&__phone-video {
+			position: absolute;
+			top: 2.34%;
+			left: 3.37%;
+			width: 73.85%;
+			height: 95.08%;
+			border-radius: fluid(22, 12);
+			object-fit: cover;
+		}
+	}
+
+	@keyframes digital-phone-sway {
+		0%,
+		100% {
+			rotate: -13deg;
+		}
+
+		50% {
+			rotate: -7deg;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-digital]').forEach(section => {
+		const endSection = section.querySelector<HTMLElement>('.benefits')
+
+		if (!endSection) return
+
+		const observer = new IntersectionObserver(
+			entries => {
+				entries.forEach(entry => {
+					section.classList.toggle('is-ending', entry.isIntersecting)
+				})
+			},
+			{
+				rootMargin: '0px 0px -20% 0px',
+				threshold: 0
+			}
+		)
+
+		observer.observe(endSection)
+	})
+</script>

@@ -46,6 +46,10 @@ const animation = {
 }
 
 const initMainMenu = rootElement => {
+	const isEnglish = document.documentElement.lang === 'en'
+	const ariaLabels = isEnglish
+		? { open: 'Open menu', close: 'Close menu' }
+		: { open: 'Открыть меню', close: 'Закрыть меню' }
 	const toggleElement = rootElement.querySelector(selectors.toggle)
 	const panelElement = rootElement.querySelector(selectors.panel)
 	const labelElement = rootElement.querySelector(selectors.label)
@@ -70,7 +74,7 @@ const initMainMenu = rootElement => {
 		rootElement.classList.add(stateClasses.isOpen)
 		rootElement.classList.add(stateClasses.isPanelVisible)
 		toggleElement.setAttribute('aria-expanded', 'true')
-		toggleElement.setAttribute('aria-label', 'Закрыть меню')
+		toggleElement.setAttribute('aria-label', ariaLabels.close)
 		panelElement.setAttribute('aria-hidden', 'false')
 		panelElement.removeAttribute('inert')
 		document.documentElement.classList.add(stateClasses.isLock)
@@ -82,7 +86,7 @@ const initMainMenu = rootElement => {
 			rootElement.classList.remove(stateClasses.isPanelVisible)
 		}
 		toggleElement.setAttribute('aria-expanded', 'false')
-		toggleElement.setAttribute('aria-label', 'Открыть меню')
+		toggleElement.setAttribute('aria-label', ariaLabels.open)
 		panelElement.setAttribute('aria-hidden', 'true')
 		panelElement.setAttribute('inert', '')
 		document.documentElement.classList.remove(stateClasses.isLock)

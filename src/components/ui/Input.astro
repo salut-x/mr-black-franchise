@@ -28,12 +28,18 @@ const {
 		class='input-field__control txt-btn'
 		{...attributes}
 	/>
+	<span
+		class='input-field__error txt-btn'
+		data-js-form-error
+	></span>
 </label>
 
 <style lang='scss'>
 	.input-field {
+		--input-field-gap: 24px;
+
 		display: grid;
-		gap: 24px;
+		gap: var(--input-field-gap);
 		width: 100%;
 		color: inherit;
 
@@ -56,6 +62,18 @@ const {
 			&:focus-visible {
 				border-bottom: 1px dashed var(--color-black);
 			}
+		}
+
+		&__error {
+			margin-top: calc(8px - var(--input-field-gap));
+
+			&:empty {
+				display: none;
+			}
+		}
+
+		&.is-invalid &__control {
+			border-bottom: 1px solid var(--color-black);
 		}
 	}
 </style>

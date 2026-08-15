@@ -1,0 +1,79 @@
+---
+import { Image } from 'astro:assets'
+
+const { counter, title, description, image } = Astro.props
+---
+
+<div class='package-item'>
+	<div class='package-item__content'>
+		<span class='package-item__counter descriptor'>{counter}</span>
+		<div class='package-item__text'>
+			<h3 class='package-item__title txt-bold'>{title}</h3>
+			<p class='package-item__description'>{description}</p>
+		</div>
+	</div>
+	<Image
+		class='package-item__image'
+		src={image}
+		alt=''
+		loading='lazy'
+		data-js-package-image
+	/>
+</div>
+
+<style lang='scss'>
+	.package-item {
+		padding-block: 20px;
+		border-top: 1px dashed
+			color-mix(in srgb, var(--color-black) 25%, transparent);
+
+		@include tablet {
+			display: flex;
+			justify-content: space-between;
+			align-items: end;
+		}
+
+		&__content {
+			display: flex;
+			flex-direction: column;
+			row-gap: 76px;
+
+			@include tablet {
+				max-width: 260px;
+				row-gap: 40px;
+			}
+			@include desktop {
+				max-width: 370px;
+				row-gap: 80px;
+			}
+		}
+
+		&__text {
+			display: flex;
+			flex-direction: column;
+			row-gap: 12px;
+		}
+
+		&__title {
+			max-width: 240px;
+		}
+
+		&__image {
+			display: none;
+
+			@include tablet {
+				display: block;
+				width: 135px;
+				height: auto;
+				aspect-ratio: 3 / 2;
+				object-fit: cover;
+				will-change: transform;
+			}
+
+			@include desktop {
+				width: 240px;
+				aspect-ratio: auto;
+			}
+		}
+	}
+</style>

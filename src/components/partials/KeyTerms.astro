@@ -1,0 +1,336 @@
+---
+import bigImage from '@/assets/images/keyterms/big-image.jpg'
+import minImage from '@/assets/images/keyterms/min-image.jpg'
+import TermsItem from '@/components/ui/TermsItem.astro'
+import { Image } from 'astro:assets'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+
+const fallbackTerms = [
+	{
+		id: '01.',
+		caption: 'Инвестиции',
+		title: 'от 1.8 млн ₽',
+		description:
+			'Стартовый капитал для полного открытия, закупки оборудования и ремонта точки'
+	},
+	{
+		id: '02.',
+		caption: 'паушальный взнос',
+		title: '390 000 ₽',
+		description:
+			'Cтартовый капитал для полного открытия, закупки обороудования и ремонта точки.'
+	},
+	{
+		id: '03.',
+		caption: 'роялти',
+		title: '4%',
+		description:
+			'Ежемесячный сбор, который начисляется только с 6-го месяца после открытия. Вы успеете выйти в плюс.'
+	},
+	{
+		id: '04.',
+		caption: 'окупаемость',
+		title: 'от 10 мес',
+		description: 'Плановый срок полного возврата ваших стартовых вложений.'
+	},
+	{
+		id: '05.',
+		caption: 'Чистая прибыль',
+		title: 'от 1 млн ₽/год',
+		description:
+			'Реальный чистый доход партнера с одной точки после вычета всех расходов.'
+	}
+]
+
+const terms = t.terms.items.map(([caption, title, description], index) => ({ id: `${String(index + 1).padStart(2, '0')}.`, caption, title, description }))
+---
+
+<section id='conditions' class='key-terms' data-header-theme='none'>
+	<div class='key-terms__inner'>
+		<div class='key-terms__media'>
+			<Image
+				class='key-terms__image'
+				src={bigImage}
+				alt=''
+				loading='lazy'
+			/>
+			<div class='key-terms__intro'>
+				<p class='key-terms__caption txt-md'>
+					{t.terms.caption}
+				</p>
+				<h2 class='key-terms__title'>{t.terms.title}</h2>
+			</div>
+		</div>
+		<div class='key-terms__panel'>
+			<div class='key-terms__panel-content'>
+				<div class='key-terms__header'>
+					<span class='key-terms__badge descriptor'>{t.terms.badge}</span>
+					<p class='key-terms__description txt-big'>{t.terms.description}</p>
+				</div>
+				<div class='key-terms__highlights'>
+					<div class='highlights__content'>
+						<ul class='highlights__list'>
+							{t.terms.highlights.map(item => <li class='highlights__item descriptor'>{item}</li>)}
+						</ul>
+						<div class='highlights__link descriptor'>@mr_black</div>
+					</div>
+					<Image
+						class='highlights__image'
+						src={minImage}
+						alt=''
+						loading='lazy'
+					/>
+				</div>
+				<ul class='key-terms__list'>
+					{
+						terms.map(term => (
+							<li class='key-terms__item'>
+								<TermsItem {...term} />
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style lang='scss'>
+	@keyframes key-terms-media {
+		from {
+			width: 100%;
+		}
+
+		to {
+			width: 50%;
+		}
+	}
+
+	@keyframes key-terms-panel {
+		from {
+			transform: translateX(10%);
+		}
+
+		to {
+			transform: translateX(0);
+		}
+	}
+
+	@keyframes key-terms-image {
+		from {
+			scale: 1;
+		}
+
+		to {
+			scale: 1.2;
+		}
+	}
+
+	@keyframes key-terms-intro {
+		from {
+			scale: 1;
+		}
+
+		to {
+			scale: 0.68;
+		}
+	}
+
+	@keyframes key-terms-content-hold {
+		from {
+			transform: translateY(0);
+		}
+
+		to {
+			transform: translateY(20vh);
+		}
+	}
+
+	.key-terms {
+		position: relative;
+		z-index: 10;
+		background: var(--color-ivory);
+
+		&__inner {
+			display: flex;
+			flex-direction: column;
+
+			@include desktop {
+				flex-direction: row;
+				align-items: flex-start;
+				overflow: clip;
+			}
+		}
+
+		&__media {
+			position: relative;
+			display: flex;
+			flex: none;
+			align-items: center;
+			justify-content: center;
+			min-height: 100svh;
+			overflow: clip;
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: rgb(0 0 0 / 20%);
+			}
+
+			@include desktop {
+				position: sticky;
+				top: 0;
+				width: 100%;
+				height: 100vh;
+				min-height: 0;
+
+				@media (prefers-reduced-motion: no-preference) {
+					@supports (animation-timeline: view()) {
+						view-timeline-name: --key-terms-media;
+						animation: key-terms-media linear both;
+						animation-timeline: --key-terms-media;
+						animation-range: contain 0% contain 100vh;
+					}
+				}
+			}
+		}
+
+		&__image {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+
+			@include desktop {
+				@media (prefers-reduced-motion: no-preference) {
+					@supports (animation-timeline: view()) {
+						animation: key-terms-image linear both;
+						animation-timeline: --key-terms-media;
+						animation-range: contain 0% contain 100vh;
+					}
+				}
+			}
+		}
+
+		&__intro {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			position: relative;
+			z-index: 1;
+			padding-inline: var(--container-padding-x);
+			color: var(--color-white);
+			text-align: center;
+
+			@include desktop {
+				@media (prefers-reduced-motion: no-preference) {
+					@supports (animation-timeline: view()) {
+						animation: key-terms-intro linear both;
+						animation-timeline: --key-terms-media;
+						animation-range: contain 0% contain 100vh;
+					}
+				}
+			}
+		}
+
+		&__header {
+			display: grid;
+			row-gap: 20px;
+			margin-bottom: 180px;
+
+			@include tablet {
+				margin-bottom: 130px;
+			}
+		}
+
+		&__caption {
+			margin-bottom: fluid(30, 16);
+		}
+
+		&__description {
+			text-transform: uppercase;
+		}
+
+		&__list {
+			margin-top: 70px;
+			border-bottom: 1px dashed
+				color-mix(in srgb, var(--color-black) 25%, transparent);
+
+			@include tablet {
+				margin-top: 100px;
+			}
+
+			@include desktop {
+				margin-top: 60px;
+			}
+		}
+
+		&__panel {
+			flex: none;
+			min-height: 100svh;
+			background: var(--color-ivory);
+			padding-block: 70px 100px;
+			padding-inline: 16px;
+
+			@include desktop {
+				width: 50%;
+				padding-block: calc(100vh + 70px) calc(100px + 20vh);
+				padding-inline: 40px;
+
+				@media (prefers-reduced-motion: no-preference) {
+					@supports (animation-timeline: view()) {
+						animation: key-terms-panel linear both;
+						animation-timeline: --key-terms-media;
+						animation-range: contain 0% contain 100vh;
+					}
+				}
+			}
+		}
+
+		&__panel-content {
+			@include desktop {
+				@media (prefers-reduced-motion: no-preference) {
+					@supports (animation-timeline: view()) {
+						animation: key-terms-content-hold linear both;
+						animation-timeline: --key-terms-media;
+						animation-range: contain 100vh contain 120vh;
+					}
+				}
+			}
+		}
+
+		&__highlights {
+			display: grid;
+			row-gap: 12px;
+
+			@include tablet {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 16px;
+			}
+		}
+	}
+
+	.highlights {
+		&__content {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+
+			@include tablet {
+				justify-content: space-between;
+				align-items: start;
+				flex-direction: column;
+			}
+		}
+
+		&__image {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+	}
+</style>

@@ -1,0 +1,106 @@
+---
+interface Props {
+	/** Имя CSS-переменной с цветом стакана, напр. '--color-ivory'. */
+	color: string
+	/** webp-декаль поверх зашитой в GLB. Без неё остаётся hero-логотип. */
+	logo?: string
+	alt?: string
+	/** Стакан не улетает вниз, а садится в этом отступе сверху, px. */
+	pinTop?: number
+	/** Ширина, с которой pinTop отключается. По умолчанию 768 — только мобилка. */
+	pinMaxWidth?: number
+}
+
+const {
+	color,
+	logo,
+	alt = '3D-модель стакана кофе Mr.BLACK',
+	pinTop,
+	pinMaxWidth,
+} = Astro.props
+---
+
+<div
+	class='cup-section'
+	data-js-cup-section
+	data-cup-color={color}
+	data-cup-logo={logo}
+	data-cup-pin-top={pinTop}
+	data-cup-pin-max-width={pinMaxWidth}
+>
+	<div class='cup-section__layer'>
+		<div class='cup-section__sticky'>
+			<model-viewer
+				class='cup-section__model'
+				src='/models/cup.glb'
+				alt={alt}
+				camera-orbit='-20deg 75deg auto'
+				field-of-view='30deg'
+				interaction-prompt='none'
+				orientation='0deg 0deg 170deg'
+				shadow-intensity='0'
+				loading='eager'
+				data-js-cup-view
+			>
+			</model-viewer>
+		</div>
+	</div>
+	<slot />
+</div>
+
+<style lang='scss'>
+	.cup-section {
+		position: relative;
+		z-index: 10;
+		overflow: clip;
+		isolation: isolate;
+
+		&__layer {
+			position: absolute;
+			z-index: 2;
+			// Низ уводим на экран вниз, чтобы sticky держался ровно до момента,
+			// когда низ группы дойдёт до верха вьюпорта — это и есть end триггера.
+			inset: 0 0 -100svh;
+			pointer-events: none;
+		}
+
+		&__sticky {
+			position: sticky;
+			top: 0;
+			display: grid;
+			place-items: center;
+			height: 100svh;
+			overflow: hidden;
+		}
+
+		&__model {
+			display: block;
+			width: 70vmin;
+			height: 70vmin;
+			background-color: transparent;
+			// Дефолт держит стакан за верхней кромкой до первого апдейта скролла.
+			transform: translate3d(0, var(--cup-offset-y, -100svh), 0)
+				scale(var(--cup-scale, 1));
+			pointer-events: none;
+			will-change: transform;
+			--poster-color: transparent;
+
+			@include mobile-only {
+				--cup-scale: 1.3;
+			}
+
+			@include tablet-only {
+				--cup-scale: 0.9;
+			}
+		}
+
+		&__model::part(default-progress-bar) {
+			display: none;
+		}
+
+		&.is-landed &__sticky {
+			position: absolute;
+			inset: 0 0 auto;
+		}
+	}
+</style>

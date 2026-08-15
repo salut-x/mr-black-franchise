@@ -1,22 +1,36 @@
 ---
 import {
-	footerContacts,
+	footerContacts as rawFooterContacts,
 	footerCredits,
 	footerLegalLinks,
 	footerPartnerEmail,
-	footerSocialLinks,
+	footerSocialLinks as rawFooterSocialLinks,
 } from '@/data/footer.js'
-import { languages } from '@/data/languages.js'
-import { mainNavigation } from '@/data/navigation.js'
+import { getLanguages, getLocale, getNavigation } from '@/data/i18n.js'
 import Button from '../ui/Button.astro'
 import Icon from '../ui/Icon.astro'
 import Link from '../ui/Link.astro'
 
+const locale = getLocale(Astro.url.pathname)
+const languages = getLanguages(Astro.url.pathname)
+const mainNavigation = getNavigation(Astro.url.pathname)
 const footerNavigation = mainNavigation.filter(({ href }) => href !== '#contacts')
+const homeHref = locale === 'en' ? '/en' : '/'
+const labels = locale === 'en' ? {
+	phone: 'Phone', email: 'Email', address: 'Address', callback: 'Request a callback', top: 'Back to top', home: 'Home', message: ['Let’s build a business', 'together.'], menu: 'Menu', social: 'Social media', footerNav: 'Footer navigation', credits: ['Designed by', 'Development'], legal: ['Personal data processing', 'Privacy policy']
+} : {
+	phone: 'Телефон', email: 'Почта', address: 'Адрес', callback: 'Заказать обратный звонок', top: 'Вернуться наверх', home: 'На главную', message: ['Давайте строить бизнес', 'вместе.'], menu: 'Меню', social: 'Соц сети', footerNav: 'Навигация в футере', credits: ['Задизайнено', 'Разработка'], legal: ['Обработка персональных данных', 'Политика конфиденциальности']
+}
+const footerContacts = rawFooterContacts.map(item => ({ ...item }))
 const [phoneContact, emailContact, addressContact] = footerContacts
+phoneContact.label = labels.phone
+emailContact.label = labels.email
+addressContact.label = labels.address
+if (locale === 'en') addressContact.value = '25 Gorokhovaya St., Saint Petersburg'
+const footerSocialLinks = rawFooterSocialLinks.map((item, index) => ({ ...item, label: locale === 'en' ? ['VK', 'Instagram', 'Telegram'][index] : item.label }))
 ---
 
-<footer class='footer' data-js-footer>
+<footer id='contacts' class='footer' data-js-footer data-header-theme='none'>
 	<div class='footer__inner container'>
 		<div class='footer__contacts'>
 			<div class='footer__phone-group'>
@@ -33,7 +47,7 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 				<Button
 					class='footer__callback'
 					labelClass='footer__callback-label'
-					label='Заказать обратный звонок'
+					label={labels.callback}
 				/>
 			</div>
 
@@ -61,14 +75,14 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			<Link
 				class='footer__top-link'
 				href='#top'
-				label='Вернуться наверх'
+				label={labels.top}
 				underline={true}
 			/>
 
 			<a
 				class='footer__logo-link'
-				href='/'
-				aria-label='На главную'
+				href={homeHref}
+				aria-label={labels.home}
 			>
 				<Icon
 					name='logo'
@@ -78,10 +92,10 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 
 			<p class='footer__message'>
 				<span class='footer__message-line footer__message-text'>
-					Давайте строить бизнес
+					{labels.message[0]}
 				</span>
 				<span class='footer__message-line'>
-					<span class='footer__message-text'>вместе.</span><Link
+					<span class='footer__message-text'>{labels.message[1]}</span><Link
 						class='footer__message-link'
 						href={footerPartnerEmail.href}
 						label={footerPartnerEmail.label}
@@ -93,7 +107,7 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 		<div class='footer__navigation'>
 			<div
 				class='footer__languages'
-				aria-label='Выбор языка'
+				aria-label={locale === 'en' ? 'Language selection' : 'Выбор языка'}
 			>
 				{languages.map((language, index) => (
 					<>
@@ -114,10 +128,10 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			</div>
 
 			<div class='footer__nav-group footer__nav-group--menu'>
-				<span class='footer__caption'>Меню</span>
+				<span class='footer__caption'>{labels.menu}</span>
 				<nav
 					class='footer__nav'
-					aria-label='Навигация в футере'
+					aria-label={labels.footerNav}
 				>
 					<ul class='footer__link-list'>
 						{footerNavigation.map(item => (
@@ -134,7 +148,7 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			</div>
 
 			<div class='footer__nav-group footer__nav-group--social'>
-				<span class='footer__caption'>Соц сети</span>
+				<span class='footer__caption'>{labels.social}</span>
 				<ul class='footer__link-list'>
 					{footerSocialLinks.map(item => (
 						<li class='footer__link-item'>
@@ -150,9 +164,9 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 		</div>
 
 		<div class='footer__credits'>
-			{footerCredits.map(item => (
+			{footerCredits.map((item, index) => (
 				<p class='footer__credit'>
-					<span class='footer__credit-label'>{item.label}</span>{' '}
+					<span class='footer__credit-label'>{labels.credits[index]}</span>{' '}
 					<Link
 						class='footer__credit-link'
 						href={item.href}
@@ -193,21 +207,19 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			<Link
 				class='footer__legal-link footer__legal-link--personal'
 				href={footerLegalLinks[0].href}
-				label={footerLegalLinks[0].label}
+				label={labels.legal[0]}
 			/>
 			<span class='footer__copyright'>© 2026 Mr.Black</span>
 			<Link
 				class='footer__legal-link footer__legal-link--privacy'
 				href={footerLegalLinks[1].href}
-				label={footerLegalLinks[1].label}
+				label={labels.legal[1]}
 			/>
 		</div>
 	</div>
 </footer>
 
 <style lang='scss'>
-	@use '../../styles/helpers' as *;
-
 	.footer {
 		--container-padding-x: 16px;
 
@@ -221,9 +233,23 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 		line-height: 110%;
 		letter-spacing: -0.03em;
 		text-transform: uppercase;
+
+		@include tablet-only {
+			height: 100svh;
+		}
+		@include desktop {
+			--container-padding-x: 30px;
+
+			height: auto;
+		}
+
 		&__inner {
 			position: relative;
 			height: 100%;
+
+			@include desktop {
+				display: flow-root;
+			}
 		}
 
 		&__contacts {
@@ -235,6 +261,14 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			flex-direction: column;
 			gap: 50px;
 			width: 285px;
+
+			@include tablet-only {
+				top: 40px;
+				gap: 40px;
+			}
+			@include desktop {
+				top: 30px;
+			}
 		}
 
 		&__phone-group {
@@ -264,6 +298,33 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 		&__legal-link,
 		&__copyright {
 			opacity: 0.5;
+		}
+
+		&__copyright {
+			@include mobile-only {
+				order: 3;
+			}
+			@include tablet {
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+		}
+
+		&__legal-link--personal {
+			@include mobile-only {
+				order: 1;
+			}
+		}
+
+		&__legal-link--privacy {
+			@include mobile-only {
+				order: 2;
+			}
+			@include tablet {
+				margin-left: auto;
+				text-align: right;
+			}
 		}
 
 		&__contact-value,
@@ -304,12 +365,32 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			width: 300px;
 			text-align: center;
 			transform: translateX(-50%);
+
+			@include tablet-only {
+				top: 40px;
+				display: block;
+				width: 425px;
+				height: 434px;
+			}
+			@include desktop {
+				top: 30px;
+				display: block;
+				width: 425px;
+				height: 434px;
+			}
 		}
 
 		:global(.footer__top-link) {
 			color: inherit;
 			line-height: inherit;
 			opacity: 0.5;
+
+			@include tablet {
+				position: absolute;
+				top: 0;
+				left: 50%;
+				transform: translateX(-50%);
+			}
 		}
 
 		&__logo-link {
@@ -317,6 +398,13 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			width: 46px;
 			height: 46px;
 			color: inherit;
+
+			@include tablet {
+				position: absolute;
+				top: 185px;
+				left: 50%;
+				transform: translateX(-50%);
+			}
 		}
 
 		:global(.footer__logo-icon) {
@@ -326,6 +414,12 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 
 		&__message {
 			width: 100%;
+
+			@include tablet {
+				position: absolute;
+				top: 400px;
+				left: 0;
+			}
 		}
 
 		&__message-line {
@@ -343,6 +437,23 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			left: var(--container-padding-x);
 			width: 269px;
 			height: 185px;
+
+			@include tablet-only {
+				top: 40px;
+				left: auto;
+				right: var(--container-padding-x);
+				width: 86px;
+				height: 434px;
+				text-align: right;
+			}
+			@include desktop {
+				top: 30px;
+				left: auto;
+				right: var(--container-padding-x);
+				width: 86px;
+				height: 434px;
+				text-align: right;
+			}
 		}
 
 		&__languages,
@@ -357,6 +468,13 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			display: flex;
 			align-items: flex-start;
 			gap: 8px;
+
+			@include tablet {
+				top: 0;
+				right: 0;
+				bottom: auto;
+				justify-content: flex-end;
+			}
 		}
 
 		:global(.footer__language),
@@ -375,14 +493,30 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			display: flex;
 			flex-direction: column;
 			gap: 15px;
+
+			@include tablet {
+				align-items: flex-end;
+			}
 		}
 
 		&__nav-group--menu {
 			left: 0;
+
+			@include tablet {
+				top: 119px;
+				left: auto;
+				right: 0;
+			}
 		}
 
 		&__nav-group--social {
 			right: 0;
+
+			@include tablet {
+				top: auto;
+				right: 0;
+				bottom: 0;
+			}
 		}
 
 		&__link-list {
@@ -393,6 +527,10 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			margin: 0;
 			padding: 0;
 			list-style: none;
+
+			@include tablet {
+				align-items: flex-end;
+			}
 		}
 
 		&__link-item {
@@ -413,6 +551,16 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			flex-direction: column;
 			gap: 6px;
 			width: 197px;
+
+			@include tablet-only {
+				top: 434px;
+			}
+			@include desktop {
+				position: relative;
+				top: auto;
+				left: auto;
+				margin-top: 434px;
+			}
 		}
 
 		&__brand {
@@ -422,6 +570,22 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			left: var(--container-padding-x);
 			right: var(--container-padding-x);
 			height: 321px;
+
+			@include tablet-only {
+				top: calc(100svh - 284px);
+				height: 268px;
+			}
+			@include desktop {
+				position: relative;
+				top: auto;
+				left: auto;
+				right: auto;
+				height: auto;
+				margin-top: 34px;
+				margin-bottom: 10px;
+				padding-top: 6px;
+				padding-bottom: 21px;
+			}
 		}
 
 		&__wordmark-wrap {
@@ -434,6 +598,19 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			width: 100%;
 			height: var(--footer-wordmark-height);
 			overflow: hidden;
+
+			@include tablet-only {
+				--footer-wordmark-height: 202px;
+
+				top: 29px;
+				height: var(--footer-wordmark-height);
+			}
+			@include desktop {
+				position: relative;
+				top: -20px;
+				height: auto;
+				aspect-ratio: 1560 / 509.09375;
+			}
 		}
 
 		&__wordmark-fill,
@@ -460,6 +637,10 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 		&__wordmark-svg {
 			transform-origin: top center;
 			will-change: height;
+
+			@include tablet {
+				height: 0;
+			}
 		}
 
 		&__cup {
@@ -470,6 +651,16 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			display: block;
 			width: 127px;
 			height: auto;
+
+			@include tablet-only {
+				right: 54px;
+				width: 166px;
+			}
+			@include desktop {
+				top: -40px;
+				right: 135px;
+				width: 320px;
+			}
 		}
 
 		&__legal {
@@ -482,258 +673,17 @@ const [phoneContact, emailContact, addressContact] = footerContacts
 			align-items: flex-start;
 			gap: 12px;
 			width: 249px;
-		}
 
-		@include mobile-only {
-			&__legal-link--personal {
-				order: 1;
-			}
-
-			&__legal-link--privacy {
-				order: 2;
-			}
-
-			&__copyright {
-				order: 3;
-			}
-		}
-
-		@include tablet {
-			&__legal {
+			@include tablet {
 				left: var(--container-padding-x);
 				right: var(--container-padding-x);
 				bottom: 0;
-				display: flex;
 				flex-direction: row;
-				align-items: flex-start;
 				justify-content: space-between;
 				gap: 24px;
 				width: auto;
 				padding-block: 20px;
 			}
-
-			&__copyright {
-				position: absolute;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-
-			&__legal-link--privacy {
-				margin-left: auto;
-				text-align: right;
-			}
-		}
-
-		@include tablet-only {
-			height: 100svh;
-
-			&__contacts {
-				top: 40px;
-				gap: 40px;
-			}
-
-			&__center {
-				top: 40px;
-				display: block;
-				width: 425px;
-				height: 434px;
-			}
-
-			:global(.footer__top-link) {
-				position: absolute;
-				top: 0;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-
-			&__logo-link {
-				position: absolute;
-				top: 185px;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-
-			&__message {
-				position: absolute;
-				top: 400px;
-				left: 0;
-			}
-
-			&__navigation {
-				top: 40px;
-				left: auto;
-				right: var(--container-padding-x);
-				width: 86px;
-				height: 434px;
-				text-align: right;
-			}
-
-			&__languages {
-				top: 0;
-				right: 0;
-				bottom: auto;
-				justify-content: flex-end;
-			}
-
-			&__nav-group {
-				align-items: flex-end;
-			}
-
-			&__nav-group--menu {
-				top: 119px;
-				left: auto;
-				right: 0;
-			}
-
-			&__nav-group--social {
-				top: auto;
-				right: 0;
-				bottom: 0;
-			}
-
-			&__link-list {
-				align-items: flex-end;
-			}
-
-			&__credits {
-				top: 434px;
-			}
-
-			&__brand {
-				top: calc(100svh - 284px);
-				height: 268px;
-			}
-
-			&__wordmark-wrap {
-				--footer-wordmark-height: 202px;
-
-				top: 29px;
-				height: var(--footer-wordmark-height);
-			}
-
-			&__wordmark-svg {
-				height: 0;
-			}
-
-			&__cup {
-				right: 54px;
-				width: 166px;
-			}
-
-		}
-
-		@include desktop {
-			--container-padding-x: 30px;
-
-			height: auto;
-
-			&__inner {
-				display: flow-root;
-			}
-
-			&__contacts {
-				top: 30px;
-			}
-
-			&__center {
-				top: 30px;
-				display: block;
-				width: 425px;
-				height: 434px;
-			}
-
-			:global(.footer__top-link) {
-				position: absolute;
-				top: 0;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-
-			&__logo-link {
-				position: absolute;
-				top: 185px;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-
-			&__message {
-				position: absolute;
-				top: 400px;
-				left: 0;
-			}
-
-			&__navigation {
-				top: 30px;
-				left: auto;
-				right: var(--container-padding-x);
-				width: 86px;
-				height: 434px;
-				text-align: right;
-			}
-
-			&__languages {
-				top: 0;
-				right: 0;
-				bottom: auto;
-				justify-content: flex-end;
-			}
-
-			&__nav-group {
-				align-items: flex-end;
-			}
-
-			&__nav-group--menu {
-				top: 119px;
-				left: auto;
-				right: 0;
-			}
-
-			&__nav-group--social {
-				top: auto;
-				right: 0;
-				bottom: 0;
-			}
-
-			&__link-list {
-				align-items: flex-end;
-			}
-
-			&__credits {
-				position: relative;
-				top: auto;
-				left: auto;
-				margin-top: 434px;
-			}
-
-			&__brand {
-				position: relative;
-				top: auto;
-				left: auto;
-				right: auto;
-				height: auto;
-				margin-top: 34px;
-				margin-bottom: 10px;
-				padding-top: 6px;
-				padding-bottom: 21px;
-			}
-
-			&__wordmark-wrap {
-				position: relative;
-				top: -20px;
-				height: auto;
-				aspect-ratio: 1560 / 509.09375;
-			}
-
-			&__wordmark-svg {
-				height: 0;
-			}
-
-			&__cup {
-				top: -40px;
-				right: 135px;
-				width: 320px;
-			}
-
 		}
 	}
 </style>

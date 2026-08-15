@@ -1,0 +1,123 @@
+---
+import packageImage1 from '@/assets/images/package/p1.jpg'
+import packageImage2 from '@/assets/images/package/p2.jpg'
+import packageImage3 from '@/assets/images/package/p3.jpg'
+import packageImage4 from '@/assets/images/package/p4.jpg'
+import packageImage5 from '@/assets/images/package/p5.jpg'
+import PackageItem from '../ui/PackageItem.astro'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+
+const assets = [
+	{
+		counter: '01',
+		title: 'Авторское меню и техкарты',
+		description:
+			'Готовая технологическая база, регулярное обновление сезонных напитков.',
+		image: packageImage1
+	},
+	{
+		counter: '02',
+		title: 'Поиск локации и дизайн-проект',
+		description:
+			'Поможем выбрать прибыльное место и разработаем планировку кофейни.',
+		image: packageImage2
+	},
+	{
+		counter: '03',
+		title: 'Обучение команды',
+		description: 'Пошаговая программа подготовки бариста и управляющих с нуля.',
+		image: packageImage3
+	},
+	{
+		counter: '04',
+		title: 'ТЕХНИКА И ИНВЕНТАРЬ',
+		description:
+			'Полностью укомплектуем вашу кофейню надежным оборудованием без переплат и лишних посредников.',
+		image: packageImage4
+	},
+	{
+		counter: '05',
+		title: 'ФЕДЕРАЛЬНЫЕ ЗАКУПКИ',
+		description:
+			'Низкие цены на кофейное зерно, молоко и брендированные расходники за счет объемов и контрактов всей сети.',
+		image: packageImage5
+	}
+]
+
+const items = assets.map((item, index) => ({ ...item, title: t.package.items[index][0], description: t.package.items[index][1] }))
+---
+
+<section class='package' data-header-theme='dark'>
+	<div class='package__inner container'>
+		<div class='package__header'>
+			<h2 class='package__title h4'>{t.package.title}</h2>
+			<p class='package__description txt-md'>{t.package.description}</p>
+		</div>
+		<div class='package__content'>
+			<ul class='package__list'>
+				{
+					items.map(item => (
+						<li class='package__item'>
+							<PackageItem {...item} />
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</div>
+</section>
+
+<style lang='scss'>
+	@use '../../styles/helpers' as *;
+
+	.package {
+		position: relative;
+		min-height: 100vh;
+		background: var(--color-ivory);
+
+		&__inner {
+			padding-block: 110px;
+			display: grid;
+			row-gap: 480px;
+			min-height: 100vh;
+
+			@include tablet {
+				row-gap: 390px;
+			}
+		}
+
+		&__header {
+			display: flex;
+			flex-direction: column;
+			row-gap: 30px;
+
+			@include tablet {
+				row-gap: 40px;
+				z-index: 3;
+			}
+		}
+
+		&__title {
+			@include tablet {
+				max-width: 480px;
+			}
+
+      @include desktop {
+        max-width: 600px;
+      }
+		}
+
+		&__description {
+			@include tablet {
+				max-width: 360px;
+				align-self: self-end;
+			}
+
+      @include desktop {
+        max-width: 500px;
+      }
+		}
+	}
+</style>

@@ -1,0 +1,28 @@
+---
+import Icon from '@/components/ui/Icon.astro'
+
+const { icon, title, description } = Astro.props
+---
+
+<div class='digital-card'>
+	<Icon
+		class='digital-card__icon'
+		name={icon}
+	/>
+	<h3 class='digital-card__title txt-bold'>{title}</h3>
+	<p class='digital-card__description body-txt'>{description}</p>
+</div>
+
+<style lang='scss'>
+	.digital-card {
+		display: grid;
+		justify-items: start;
+		row-gap: 16px;
+
+		&__icon {
+			width: 45px;
+			height: 45px;
+			margin-bottom: 14px;
+		}
+	}
+</style>

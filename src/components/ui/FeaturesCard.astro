@@ -1,0 +1,42 @@
+---
+const { caption, value, description } = Astro.props
+---
+
+<div class='features-card'>
+	<div class='features-card__header'>
+		<h3 class='features-card__caption descriptor'>{caption}</h3>
+	</div>
+	<div class='features-card__body'>
+		<span class='features-card__number h5'>{value}</span>
+		<p class='features-card__descri'>{description}</p>
+	</div>
+</div>
+
+<style lang='scss'>
+	.features-card {
+		&__caption {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding-block: 15px;
+			border-bottom: 1px dashed
+				color-mix(in srgb, var(--color-black) 25%, transparent);
+
+			&::before {
+				content: '';
+				width: 5px;
+				height: 5px;
+				border-radius: 50%;
+				margin-bottom: 4px;
+				background: var(--color-black);
+			}
+		}
+
+		&__body {
+			display: flex;
+			flex-direction: column;
+			row-gap: 10px;
+			margin-top: 40px;
+		}
+	}
+</style>

@@ -1,0 +1,114 @@
+---
+import galleryImage1 from '@/assets/images/gallery/g1.jpg'
+import galleryImage2 from '@/assets/images/gallery/g2.jpg'
+import galleryImage3 from '@/assets/images/gallery/g3.jpg'
+import galleryImage4 from '@/assets/images/gallery/g4.jpg'
+import { Image } from 'astro:assets'
+
+const images = [galleryImage1, galleryImage2, galleryImage3, galleryImage4]
+---
+
+<section class='sticky-gallery' data-header-theme='dark'>
+	<div class='sticky-gallery__list'>
+		{
+			images.map((image, index) => (
+				<div
+					class={`sticky-gallery__item sticky-gallery__item--${index + 1}`}
+					style={`--sticky-gallery-index: ${images.length - index}`}
+				>
+					<Image
+						class='sticky-gallery__image'
+						src={image}
+						alt=''
+						loading='lazy'
+					/>
+				</div>
+			))
+		}
+	</div>
+</section>
+
+<style lang='scss'>
+	.sticky-gallery {
+		--sticky-gallery-shift: #{fluid(80, 30)};
+
+		position: relative;
+		z-index: 10;
+		isolation: isolate;
+		background: var(--color-ivory);
+
+		&__list {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding-inline: var(--container-padding-x);
+		}
+
+		&__item {
+			position: sticky;
+			bottom: 0;
+			z-index: var(--sticky-gallery-index);
+			display: grid;
+			place-items: center;
+			width: calc(100% - var(--sticky-gallery-shift));
+			height: 100svh;
+			padding-block: var(--container-padding-x);
+
+			@include desktop {
+				width: 100%;
+			}
+		}
+
+		&__item--1 {
+			align-self: flex-end;
+
+			@include desktop {
+				place-items: end end;
+				padding-bottom: fluid(80, 40);
+			}
+		}
+
+		&__item--2 {
+			align-self: flex-start;
+			padding-bottom: 10rem;
+
+			@include desktop {
+				place-items: start center;
+				padding-bottom: var(--container-padding-x);
+			}
+		}
+
+		&__item--2 &__image {
+			@include desktop {
+				transform: translateY(40px);
+			}
+		}
+
+		&__item--3 {
+			@include desktop {
+				place-items: center start;
+			}
+		}
+
+		&__item--4 {
+			align-self: flex-end;
+			padding-bottom: fluid(56, 24);
+
+			@include desktop {
+				place-items: end center;
+			}
+		}
+
+		&__image {
+			width: 100%;
+			height: auto;
+			aspect-ratio: 4 / 3;
+			object-fit: cover;
+
+			@include desktop {
+				width: 59.4%;
+				aspect-ratio: auto;
+			}
+		}
+	}
+</style>

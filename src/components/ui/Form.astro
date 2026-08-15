@@ -4,13 +4,16 @@ import CheckBox from './checkbox.astro'
 import FormButton from './FormButton.astro'
 import Input from './Input.astro'
 import Link from './Link.astro'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
 
 interface Props extends FormHTMLAttributes {
 	submitLabel?: string
 }
 
 const {
-	submitLabel = 'Отправить',
+	submitLabel = t.form.submit,
 	class: className,
 	...attributes
 } = Astro.props
@@ -18,46 +21,58 @@ const {
 
 <form
 	class:list={['contact-form', className]}
+	data-js-form
 	{...attributes}
 >
 	<Input
-		label='Имя*'
+		label={t.form.name}
 		name='name'
-		placeholder='Дмитрий'
+		placeholder={t.form.namePlaceholder}
+		autocomplete='name'
 		required
 	/>
 	<Input
-		label='Почта*'
+		label={t.form.email}
 		name='email'
 		type='email'
 		placeholder='mr.black@gmail.com'
+		autocomplete='email'
+		pattern='[^@ ]+@[^@ ]+[.][^@ .]{2,}'
 		required
 	/>
 	<Input
-		label='Телефон*'
+		label={t.form.phone}
 		name='phone'
 		type='tel'
-		placeholder='8 (931) 000 88 00'
+		placeholder='+7 (931) 000-88-00'
+		autocomplete='tel'
 		required
+		data-js-form-phone
 	/>
 	<Input
-		label='Город'
+		label={t.form.city}
 		name='city'
-		placeholder='Москва'
+		placeholder={t.form.cityPlaceholder}
 	/>
 	<CheckBox
 		name='consent'
 		required
+		data-error={t.form.consentError}
 	>
-		Согласен с&nbsp;
+		{t.form.consent}&nbsp;
 		<Link
 			href='/privacy-policy'
-			label='политикой конфиденциальности'
+			label={t.form.privacy}
 			class='checkbox__link txt-btn'
 			underline={true}
 		/>
 	</CheckBox>
 	<FormButton label={submitLabel} />
+	<p
+		class='contact-form__status txt-btn'
+		role='status'
+		data-js-form-status
+	></p>
 </form>
 
 <style lang='scss'>
@@ -66,5 +81,9 @@ const {
 		gap: 20px;
 		width: 100%;
 		color: var(--color-black);
+
+		&__status:empty {
+			display: none;
+		}
 	}
 </style>

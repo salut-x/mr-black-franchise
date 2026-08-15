@@ -1,0 +1,219 @@
+---
+import Icon from '@/components/ui/Icon.astro'
+import { getLocale } from '@/data/i18n.js'
+
+const locale = getLocale(Astro.url.pathname)
+---
+
+<div
+	class='preloader'
+	data-preloader
+	role='status'
+	aria-label={locale === 'en' ? 'Loading page' : 'Загрузка страницы'}
+>
+	<div
+		class='preloader__curtain'
+		data-preloader-curtain
+	></div>
+
+	<div
+		class='preloader__logo'
+		data-preloader-logo
+		style='--preloader-clip: 100%'
+	>
+		<Icon
+			name='logo'
+			class='preloader__logo-icon'
+		/>
+	</div>
+
+	<div
+		class='preloader__progress h2'
+		data-preloader-progress
+		aria-live='polite'
+	>
+		0%
+	</div>
+</div>
+
+<style lang='scss'>
+	.preloader {
+		position: fixed;
+		z-index: 2147483646;
+		inset: 0;
+		color: var(--color-black);
+		pointer-events: all;
+
+		&__curtain {
+			position: absolute;
+			inset: 0;
+			background-color: var(--color-orange);
+			will-change: transform;
+		}
+
+		&__logo {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			z-index: 1;
+			width: fluid(72, 52);
+			height: fluid(72, 52);
+			translate: -50% -50%;
+			clip-path: inset(var(--preloader-clip) 0 0);
+			will-change: transform, clip-path;
+		}
+
+		:global(.preloader__logo-icon) {
+			width: 100%;
+			height: 100%;
+		}
+
+		&__progress {
+			position: fixed;
+			right: var(--container-padding-x);
+			bottom: var(--container-padding-x);
+			z-index: 1;
+			font-variant-numeric: tabular-nums;
+			will-change: opacity, transform;
+		}
+
+		&.is-complete {
+			visibility: hidden;
+			pointer-events: none;
+		}
+	}
+
+	:global(html:has(.preloader:not(.is-complete))) {
+		overflow: hidden;
+	}
+</style>
+
+<script>
+	const preloader = document.querySelector<HTMLElement>('[data-preloader]')
+
+	if (preloader) {
+		if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+
+		const scrollToStart = () => window.scrollTo(0, 0)
+		scrollToStart()
+		window.addEventListener('pageshow', scrollToStart, { once: true })
+
+		const curtain = preloader.querySelector<HTMLElement>('[data-preloader-curtain]')
+		const logo = preloader.querySelector<HTMLElement>('[data-preloader-logo]')
+		const progress = preloader.querySelector<HTMLElement>('[data-preloader-progress]')
+		const model = document.querySelector<HTMLElement & { loaded?: boolean }>(
+			'[data-js-hero-model-view]'
+		)
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+		let pageLoaded = document.readyState === 'complete'
+		let modelLoaded = !model || model.loaded === true
+		let readyTime = pageLoaded && modelLoaded ? performance.now() : 0
+		const startTime = performance.now()
+		const markReady = () => {
+			if (pageLoaded && modelLoaded && !readyTime) readyTime = performance.now()
+		}
+
+		if (!pageLoaded) {
+			window.addEventListener(
+				'load',
+				() => {
+					pageLoaded = true
+					markReady()
+				},
+				{ once: true }
+			)
+		}
+
+		if (model && !modelLoaded) {
+			const handleModelReady = () => {
+				modelLoaded = true
+				markReady()
+			}
+
+			model.addEventListener('load', handleModelReady, { once: true })
+			model.addEventListener('error', handleModelReady, { once: true })
+		}
+
+		const setProgress = (value: number) => {
+			const roundedValue = Math.min(100, Math.round(value))
+			if (progress) progress.textContent = `${roundedValue}%`
+			logo?.style.setProperty('--preloader-clip', `${100 - roundedValue}%`)
+		}
+
+		const finish = async () => {
+			scrollToStart()
+			setProgress(100)
+			await new Promise(resolve => window.setTimeout(resolve, reduceMotion ? 0 : 180))
+
+			if (logo) {
+				const logoFade = logo.animate(
+					[{ opacity: 1 }, { opacity: 0 }],
+					{
+						duration: reduceMotion ? 1 : 400,
+						easing: 'ease',
+						fill: 'forwards'
+					}
+				)
+
+				await logoFade.finished.catch(() => undefined)
+			}
+
+			const animations: Animation[] = []
+
+			if (curtain) {
+				animations.push(
+					curtain.animate(
+						[{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }],
+						{
+							duration: reduceMotion ? 1 : 900,
+							easing: 'cubic-bezier(0.76, 0, 0.24, 1)',
+							fill: 'forwards'
+						}
+					)
+				)
+			}
+
+			if (progress) {
+				animations.push(
+					progress.animate(
+						[
+							{ opacity: 1, transform: 'translateY(0)' },
+							{ opacity: 0, transform: 'translateY(-24px)' }
+						],
+						{
+							duration: reduceMotion ? 1 : 350,
+							easing: 'ease',
+							fill: 'forwards'
+						}
+					)
+				)
+			}
+
+			await Promise.all(animations.map(animation => animation.finished.catch(() => undefined)))
+
+			preloader.classList.add('is-complete')
+		}
+
+		const update = (currentTime: number) => {
+			const elapsed = currentTime - startTime
+			let currentProgress = Math.min(90, (elapsed / 1200) * 90)
+
+			if (pageLoaded && modelLoaded && elapsed >= 1200) {
+				const completionStart = Math.max(startTime + 1200, readyTime)
+				currentProgress = 90 + Math.min(10, ((currentTime - completionStart) / 350) * 10)
+			}
+
+			setProgress(currentProgress)
+
+			if (currentProgress >= 100) {
+				finish()
+				return
+			}
+
+			window.requestAnimationFrame(update)
+		}
+
+		window.requestAnimationFrame(update)
+	}
+</script>

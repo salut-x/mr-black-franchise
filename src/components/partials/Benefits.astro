@@ -1,0 +1,90 @@
+---
+import benefitImage1 from '@/assets/images/benefits/b1-card.png'
+import benefitImage2 from '@/assets/images/benefits/b2-card.png'
+import benefitImage3 from '@/assets/images/benefits/b3-card.png'
+import BenefitCard from '@/components/ui/BenefitCard.astro'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+
+const benefitAssets = [
+	{
+		title: 'Рост маржи',
+		description:
+			'Гарантируем +20% к прибыли исключительно за счет узнаваемости и высокой репутации бренда Mr.Black.',
+		metric: '+20%',
+		image: benefitImage1
+	},
+	{
+		title: 'Лояльная аудитория',
+		description:
+			'Постоянные клиенты, которые доверяют нашему качеству и возвращаются каждый день.',
+		metric: '8K+',
+		image: benefitImage2
+	},
+	{
+		title: 'Охват маркетинга',
+		description:
+			'Более 3 000 000 просмотров нашей рекламы в год благодаря креативному маркетингу, который ярко выделяется в индустрии.',
+		metric: '3M+',
+		image: benefitImage3
+	}
+]
+
+const benefits = benefitAssets.map((benefit, index) => ({ ...benefit, title: t.benefits[index][0], description: t.benefits[index][1], moreLabel: t.common.more }))
+---
+
+<section class='benefits'>
+	<div class='benefits__inner container'>
+		<ul class='benefits__list'>
+			{
+				benefits.map(benefit => (
+					<li class='benefits__item'>
+						<BenefitCard {...benefit} />
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>
+
+<style lang='scss'>
+	.benefits {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		background-color: var(--color-ivory);
+		padding-bottom: 80px;
+
+		@include desktop {
+			grid-column: 1 / -1;
+		}
+
+		&__inner {
+			max-width: none;
+		}
+
+		&__list {
+			display: grid;
+			width: 100%;
+			border-bottom: 1px dashed
+				color-mix(in srgb, currentColor 30%, transparent);
+
+			@include desktop {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+		}
+
+		&__item {
+			min-width: 0;
+
+			@include desktop {
+				display: flex;
+
+				&:not(:last-child) :global(.benefit-card) {
+					border-right: 0;
+				}
+			}
+		}
+	}
+</style>

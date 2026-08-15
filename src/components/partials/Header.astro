@@ -1,6 +1,5 @@
 ---
-import { languages } from '@/data/languages.js'
-import { mainNavigation } from '@/data/navigation.js'
+import { getCopy, getLanguages, getNavigation } from '@/data/i18n.js'
 import Icon from '../ui/Icon.astro'
 import ImageButton from '../ui/ImageButton.astro'
 import Link from '../ui/Link.astro'
@@ -12,6 +11,10 @@ interface Props {
 }
 
 const { theme = 'light', overlay = false } = Astro.props
+const t = getCopy(Astro.url.pathname)
+const languages = getLanguages(Astro.url.pathname)
+const mainNavigation = getNavigation(Astro.url.pathname)
+const homeHref = Astro.url.pathname.startsWith('/en') ? '/en' : '/'
 
 const contactsLink = mainNavigation.find(({ href }) => href === '#contacts')
 const desktopNavigation = mainNavigation.filter(
@@ -25,11 +28,12 @@ const desktopNavigation = mainNavigation.filter(
 		`header--${theme}`,
 		{ 'header--overlay': overlay },
 	]}
+	data-js-header
 >
 	<div class='header__inner container'>
 		<nav
 			class='header__desktop-nav'
-			aria-label='Основная навигация'
+			aria-label={t.a11y.mainNav}
 		>
 			<ul class='header__desktop-list'>
 				{
@@ -49,7 +53,7 @@ const desktopNavigation = mainNavigation.filter(
 			contactsLink && (
 				<nav
 					class='header__tablet-nav'
-					aria-label='Дополнительная навигация'
+					aria-label={t.a11y.extraNav}
 				>
 					<ul class='header__tablet-list'>
 						<li>
@@ -60,7 +64,7 @@ const desktopNavigation = mainNavigation.filter(
 						</li>
 						<li
 							class='header__languages'
-							aria-label='Выбор языка'
+							aria-label={t.a11y.language}
 						>
 							{languages.map((language, index) => (
 								<>
@@ -85,8 +89,8 @@ const desktopNavigation = mainNavigation.filter(
 		}
 		<a
 			class='header__logo'
-			href='/'
-			aria-label='На главную'
+			href={homeHref}
+			aria-label={t.a11y.home}
 		>
 			<Icon
 				name='logo'
@@ -110,7 +114,7 @@ const desktopNavigation = mainNavigation.filter(
 
 			<div
 				class='header__desktop-languages txt-menu'
-				aria-label='Выбор языка'
+				aria-label={t.a11y.language}
 			>
 				{
 					languages.map((language, index) => (
@@ -134,7 +138,7 @@ const desktopNavigation = mainNavigation.filter(
 
 			<ImageButton
 				class='header__contact-button'
-				label='Связаться'
+				label={t.common.contact}
 				theme={theme === 'dark' ? 'light' : 'dark'}
 			/>
 		</div>
@@ -142,28 +146,35 @@ const desktopNavigation = mainNavigation.filter(
 </header>
 
 <style lang='scss'>
-	@use '../../styles/helpers' as *;
-
 	.header {
 		position: sticky;
 		top: 0;
 		z-index: 20;
 		transition:
+			transform var(--transition-duration) ease,
+			opacity var(--transition-duration) ease,
+			visibility var(--transition-duration),
 			color var(--transition-duration),
 			background-color var(--transition-duration);
 
 		&--light {
 			// background-color: var(--color-ivory);
-			color: var(--color-black);
+			color: var(--color-ivory);
 		}
 
 		&--dark {
 			// background-color: var(--color-black);
-			color: var(--color-ivory);
+			color: var(--color-black);
+		}
+
+		&--none {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
 		}
 
 		&--overlay {
-			position: absolute;
+			position: fixed;
 			right: 0;
 			left: 0;
 		}
@@ -174,17 +185,46 @@ const desktopNavigation = mainNavigation.filter(
 			align-items: center;
 			justify-content: space-between;
 			gap: 24px;
+
+			@include tablet-only {
+				position: relative;
+			}
+			@include desktop {
+				position: relative;
+				align-items: flex-start;
+				min-height: 65px;
+				padding-top: 20px;
+			}
 		}
 		&__logo {
 			position: relative;
 			z-index: 3;
 			display: inline-flex;
 			color: inherit;
+
+			@include tablet-only {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			@include desktop {
+				position: absolute;
+				top: 20px;
+				left: 50%;
+				transform: translateX(-50%);
+			}
 		}
 
 		:global(.header:has(.main-menu.is-panel-visible)) &__logo {
 			color: var(--color-black);
 			transition: none;
+
+			@include tablet-only {
+				opacity: 0;
+				visibility: hidden;
+				pointer-events: none;
+			}
 		}
 
 		:global(.header:has(.main-menu.is-panel-visible))
@@ -199,11 +239,29 @@ const desktopNavigation = mainNavigation.filter(
 		}
 		&__tablet-nav {
 			display: none;
+
+			@include tablet-only {
+				display: block;
+			}
 		}
 
-		&__desktop-nav,
+		&__desktop-nav {
+			display: none;
+
+			@include desktop {
+				display: block;
+			}
+		}
+
 		&__desktop-actions {
 			display: none;
+
+			@include desktop {
+				display: flex;
+				align-items: flex-start;
+				gap: 40px;
+				margin-left: auto;
+			}
 		}
 
 		&__tablet-list {
@@ -213,12 +271,35 @@ const desktopNavigation = mainNavigation.filter(
 			margin: 0;
 			padding: 0;
 			list-style: none;
+
+			@include tablet-only {
+				gap: 40px;
+			}
+		}
+
+		&__desktop-list {
+			@include desktop {
+				display: flex;
+				align-items: center;
+				gap: 40px;
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
 		}
 
 		&__languages {
 			display: flex;
 			align-items: baseline;
 			gap: 8px;
+		}
+
+		&__desktop-languages {
+			@include desktop {
+				display: flex;
+				align-items: flex-start;
+				gap: 8px;
+			}
 		}
 
 		:global(.header__language) {
@@ -230,94 +311,51 @@ const desktopNavigation = mainNavigation.filter(
 			opacity: 1;
 		}
 
-		@include tablet-only {
-			&__inner {
-				position: relative;
-			}
-
-			&__tablet-nav {
-				display: block;
-			}
-
-			&__tablet-list {
-				gap: 40px;
-			}
-
-			&__logo {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-			}
-
-			:global(.header:has(.main-menu.is-panel-visible)) &__logo {
-				opacity: 0;
-				visibility: hidden;
-				pointer-events: none;
-			}
-
-			:global(.main-menu) {
-				margin-left: auto;
+		:global(.header__desktop-item) {
+			@include desktop {
+				display: flex;
 			}
 		}
 
-		@include desktop {
-			&__inner {
-				position: relative;
-				align-items: flex-start;
-				min-height: 65px;
-				padding-top: 20px;
-			}
-
-			&__desktop-nav {
-				display: block;
-			}
-
-			&__desktop-list {
-				display: flex;
-				align-items: center;
-				gap: 40px;
-				margin: 0;
-				padding: 0;
-				list-style: none;
-			}
-
-			:global(.header__desktop-item) {
+		:global(.header__desktop-contact) {
+			@include desktop {
 				display: flex;
 			}
+		}
 
-			&__logo {
-				position: absolute;
-				top: 20px;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-
-			&__desktop-actions {
-				display: flex;
-				align-items: flex-start;
-				gap: 40px;
-				margin-left: auto;
-			}
-
-			&__desktop-languages {
-				display: flex;
-				align-items: flex-start;
-				gap: 8px;
-			}
-
-			:global(.header__desktop-contact) {
-				display: flex;
-			}
-
-			:global(.header__desktop-language) {
+		:global(.header__desktop-language) {
+			@include desktop {
 				padding: 0;
 				opacity: 0.4;
 			}
+		}
 
-			:global(.header__desktop-language.is-active) {
+		:global(.header__desktop-language.is-active) {
+			@include desktop {
 				opacity: 1;
 			}
 		}
+
+		:global(.main-menu) {
+			@include tablet-only {
+				margin-left: auto;
+			}
+		}
+
+	}
+
+	:global(.header--light .header__contact-button) {
+		background-color: var(--color-ivory);
+		color: var(--color-black);
+	}
+
+	:global(.header--dark .header__contact-button) {
+		background-color: var(--color-black);
+		color: var(--color-white);
+	}
+
+	:global(.header:has(.main-menu.is-panel-visible)) {
+		transform: none;
+		transition: none;
 	}
 </style>

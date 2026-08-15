@@ -1,0 +1,41 @@
+---
+const { caption, id, title, description } = Astro.props
+---
+
+<div class='terms-item'>
+	<div class='terms-item__header'>
+		<span class='terms-item__caption descriptor'>{caption}</span>
+		<span class='terms-item__counter descriptor'>{id}</span>
+	</div>
+	<div class='terms-item__body'>
+		<h3 class='terms-item__title h4'>{title}</h3>
+		<p class='terms-item__description'>{description}</p>
+	</div>
+</div>
+
+<style lang='scss'>
+	.terms-item {
+		display: flex;
+		flex-direction: column;
+		row-gap: 15px;
+		padding-block: 20px 60px;
+		border-top: 1px dashed
+			color-mix(in srgb, var(--color-black) 25%, transparent);
+
+		&__header {
+			display: flex;
+			justify-content: space-between;
+			column-gap: 24px;
+		}
+
+		&__body {
+			display: flex;
+			flex-direction: column;
+			row-gap: 80px;
+		}
+
+		&__description {
+			max-width: 430px;
+		}
+	}
+</style>

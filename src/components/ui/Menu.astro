@@ -1,9 +1,13 @@
 ---
-import { languages } from '@/data/languages.js'
-import { mainNavigation } from '@/data/navigation.js'
+import { getCopy, getLanguages, getNavigation } from '@/data/i18n.js'
 import ImageButton from './ImageButton.astro'
 import Icon from './Icon.astro'
 import Link from './Link.astro'
+
+const t = getCopy(Astro.url.pathname)
+const languages = getLanguages(Astro.url.pathname)
+const mainNavigation = getNavigation(Astro.url.pathname)
+const homeHref = Astro.url.pathname.startsWith('/en') ? '/en' : '/'
 ---
 
 <div
@@ -13,7 +17,7 @@ import Link from './Link.astro'
 	<button
 		class='main-menu__toggle'
 		type='button'
-		aria-label='Открыть меню'
+		aria-label={t.a11y.openMenu}
 		aria-controls='main-menu-panel'
 		aria-expanded='false'
 		data-js-main-menu-toggle
@@ -22,7 +26,7 @@ import Link from './Link.astro'
 			class='main-menu__label txt-btn'
 			data-js-main-menu-label
 		>
-			Меню
+			{t.a11y.menu}
 		</span>
 		<span
 			class='main-menu__icon'
@@ -47,8 +51,8 @@ import Link from './Link.astro'
 	>
 		<a
 			class='main-menu__logo'
-			href='/'
-			aria-label='На главную'
+			href={homeHref}
+			aria-label={t.a11y.home}
 		>
 			<Icon
 				name='logo'
@@ -58,7 +62,7 @@ import Link from './Link.astro'
 
 		<nav
 			class='main-menu__nav'
-			aria-label='Мобильная навигация'
+			aria-label={t.a11y.mobileNav}
 		>
 			<ul class='main-menu__list'>
 				{
@@ -80,14 +84,14 @@ import Link from './Link.astro'
 		<footer class='main-menu__footer'>
 			<ImageButton
 				class='main-menu__contact'
-				label='Связаться'
+				label={t.common.contact}
 				theme='dark'
 				data-js-main-menu-footer-item
 			/>
 
 			<div
 				class='main-menu__languages txt-md'
-				aria-label='Выбор языка'
+				aria-label={t.a11y.language}
 				data-js-main-menu-footer-item
 			>
 				{
@@ -114,11 +118,13 @@ import Link from './Link.astro'
 </div>
 
 <style lang='scss'>
-	@use '../../styles/helpers' as *;
-
 	.main-menu {
 		position: relative;
 		z-index: 2;
+
+		@include desktop {
+			display: none;
+		}
 
 		&__toggle {
 			position: relative;
@@ -134,6 +140,11 @@ import Link from './Link.astro'
 			color: var(--color-black);
 			cursor: pointer;
 			transition: background-color var(--transition-duration);
+
+			@include mobile-only {
+				grid-template-columns: minmax(0, 1fr) 68px;
+				max-width: 170px;
+			}
 		}
 
 		&.is-open &__toggle {
@@ -232,6 +243,10 @@ import Link from './Link.astro'
 			width: 41px;
 			height: 41px;
 			color: var(--color-black);
+
+			@include mobile-only {
+				display: none;
+			}
 		}
 
 		:global(.main-menu__logo-image) {
@@ -269,12 +284,21 @@ import Link from './Link.astro'
 			padding-top: 16px;
 			border-top: 1px dashed
 				color-mix(in srgb, var(--color-black) 30%, transparent);
+
+			@include mobile-only {
+				grid-template-columns: auto auto;
+				gap: 16px;
+			}
 		}
 
 		&__languages {
 			display: flex;
 			align-items: center;
 			gap: 18px;
+
+			@include mobile-only {
+				gap: 8px;
+			}
 		}
 
 		:global(.main-menu__language) {
@@ -292,30 +316,6 @@ import Link from './Link.astro'
 		&__link:focus-visible {
 			outline: 2px dashed currentColor;
 			outline-offset: 4px;
-		}
-
-		@include mobile-only {
-			&__logo {
-				display: none;
-			}
-
-			&__toggle {
-				grid-template-columns: minmax(0, 1fr) 68px;
-				max-width: 170px;
-			}
-
-			&__footer {
-				grid-template-columns: auto auto;
-				gap: 16px;
-			}
-
-			&__languages {
-				gap: 8px;
-			}
-		}
-
-		@include desktop {
-			display: none;
 		}
 	}
 </style>

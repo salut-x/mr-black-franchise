@@ -1,0 +1,158 @@
+---
+import Button from '@/components/ui/Button.astro'
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+interface Props {
+	title: string
+	description: string
+	metric: string
+	image: ImageMetadata
+	imageAlt?: string
+	moreLabel?: string
+}
+
+const { title, description, metric, image, imageAlt = '', moreLabel = 'Узнать подробнее' } = Astro.props
+---
+
+<article
+	class='benefit-card'
+	data-benefit-card
+>
+	<div class='benefit-card__content'>
+		<h3 class='benefit-card__title h7'>{title}</h3>
+		<p class='benefit-card__description body-txt'>{description}</p>
+		<Button
+			class='benefit-card__button'
+			label={moreLabel}
+		/>
+	</div>
+	<div class='benefit-card__media'>
+		<div
+			class='benefit-card__metric'
+			aria-hidden='true'
+		>
+			<span class='h5'>{metric}</span>
+		</div>
+		<Image
+			class='benefit-card__image'
+			src={image}
+			alt={imageAlt}
+			loading='lazy'
+		/>
+	</div>
+</article>
+
+<style lang='scss'>
+	.benefit-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		row-gap: 100px;
+		width: 100%;
+		height: 100%;
+		padding-block: 60px;
+		border: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
+		border-bottom: none;
+		text-align: center;
+
+		&__content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			row-gap: 16px;
+			max-width: 380px;
+		}
+
+		&__description {
+			max-width: 400px;
+		}
+
+		&__button {
+			margin-top: 14px;
+		}
+
+		&__media {
+			position: relative;
+			margin-top: auto;
+			width: min(80%, 320px);
+			isolation: isolate;
+		}
+
+		&__metric {
+			position: absolute;
+			z-index: -1;
+			top: 0;
+			left: 50%;
+			display: grid;
+			padding-top: 28px;
+			width: 76%;
+			aspect-ratio: 1.35;
+			background-color: var(--color-white);
+			transform: translate(-50%, 35%);
+			transition: transform 600ms cubic-bezier(0.65, 0, 0.35, 1);
+		}
+
+		&__image {
+			position: relative;
+			z-index: 1;
+			display: block;
+			width: 100%;
+			height: auto;
+			object-fit: contain;
+		}
+
+		@include hover(false) {
+			.benefit-card__metric {
+				transform: translate(-50%, -45%) rotate(-7deg);
+			}
+		}
+
+		@include mobile-only {
+			padding: 72px 24px 48px;
+
+			&.is-metric-visible .benefit-card__metric {
+				transform: translate(-50%, -45%) rotate(-7deg);
+			}
+		}
+
+		@include tablet-only {
+			&.is-metric-visible .benefit-card__metric {
+				transform: translate(-50%, -45%) rotate(-7deg);
+			}
+		}
+	}
+</style>
+
+<script>
+	const cards = document.querySelectorAll<HTMLElement>('[data-benefit-card]')
+	const timers = new WeakMap<HTMLElement, number>()
+
+	const observer = new IntersectionObserver(
+		entries => {
+			entries.forEach(entry => {
+				const card = entry.target as HTMLElement
+				const currentTimer = timers.get(card)
+
+				if (currentTimer) window.clearTimeout(currentTimer)
+
+				if (!entry.isIntersecting) {
+					card.classList.remove('is-metric-visible')
+					return
+				}
+
+				card.classList.add('is-metric-visible')
+				timers.set(
+					card,
+					window.setTimeout(() => {
+						card.classList.remove('is-metric-visible')
+						timers.delete(card)
+					}, 1800)
+				)
+			})
+		},
+		{ threshold: 0.45 }
+	)
+
+	cards.forEach(card => observer.observe(card))
+</script>

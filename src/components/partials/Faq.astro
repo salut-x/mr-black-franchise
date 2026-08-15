@@ -1,0 +1,177 @@
+---
+import Accordion from '../ui/Accordion.astro'
+import Icon from '../ui/Icon.astro'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+
+const fallbackQuestions = [
+	{
+		number: '01.',
+		title: 'Какая площадь нужна для запуска и как её правильно подобрать?',
+		answer:
+			'Формату To go хватает 4 кв.м под стойку и 25 кв.м общей площади, Lounge требует от 65 кв.м, Specialty — от 95 кв.м. Локацию подбираем вместе: смотрим пеший трафик, соседей и стоимость аренды, а под конкретное помещение отдаём готовый дизайн-проект.'
+	},
+	{
+		number: '02.',
+		title: 'Поместится ли всё необходимое оборудование всего на 4 кв.метрах?',
+		answer:
+			'Да, комплект для To go собран именно под эту площадь: кофемашина, кофемолка, холодильник и рабочая поверхность встают в одну линию. Полный список техники с габаритами и схемой расстановки входит в пакет.'
+	},
+	{
+		number: '03.',
+		title:
+			'В каких локациях формат мини-кофейни приносит больше всего прибыли?',
+		answer:
+			'Бизнес-центры, вокзалы, крупные ТЦ и первые линии улиц с плотным пешим потоком. Решает не проходимость по бумагам, а количество людей, которые идут мимо точки каждый день по одному маршруту.'
+	},
+	{
+		number: '04.',
+		title:
+			'Потребуются ли сложные согласования или перепланировка для такой площади?',
+		answer:
+			'Как правило нет: формат не требует капитальных изменений и мокрых точек сверх уже имеющихся. Помогаем собрать документы для надзорных органов и проверяем помещение до того, как вы подпишете договор аренды.'
+	},
+	{
+		number: '05.',
+		title: 'Какую поддержку получает партнёр после открытия?',
+		answer:
+			'Обучение команды с нуля, регулярное обновление сезонного меню, федеральные цены на зерно, молоко и расходники за счёт объёмов сети и сопровождение управляющего на всём сроке работы.'
+	}
+]
+
+const questions = t.faq.map(([title, answer], index) => ({ number: `${String(index + 1).padStart(2, '0')}.`, title, answer }))
+---
+
+<section id='faq' class='faq' data-header-theme='light'>
+	<div class='faq__inner container'>
+		<div class='faq__pin'>
+			<div class='faq__header'>
+				<h2 class='faq__title h1'>
+					FAQ
+					<Icon
+						name='cup'
+						class='faq__cup'
+					/>
+				</h2>
+				<p class='faq__description txt-md'>
+					{t.faqIntro}
+				</p>
+			</div>
+		</div>
+		<div
+			class='faq__list'
+			data-js-accordion-list
+		>
+			{
+				questions.map(({ number, title, answer }) => (
+					<Accordion
+						number={number}
+						title={title}
+					>
+						<p>{answer}</p>
+					</Accordion>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style lang='scss'>
+	.faq {
+		--faq-header-travel: 200px;
+
+		position: relative;
+		background: var(--color-black);
+		color: var(--color-ivory);
+		z-index: 100;
+
+		@include tablet-only {
+			height: 100vh;
+			display: flex;
+			align-items: center;
+		}
+
+		&__inner {
+			display: flex;
+			flex-direction: column;
+			row-gap: fluid(80, 60);
+			padding-block: fluid(170, 120);
+		}
+
+		&__pin {
+			margin-bottom: calc(var(--faq-header-travel) * -1);
+
+			&::after {
+				content: '';
+				display: block;
+				height: var(--faq-header-travel);
+			}
+		}
+
+		&__header {
+			position: sticky;
+			top: 100px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			row-gap: fluid(24, 16);
+			text-align: center;
+		}
+
+		&__title {
+			position: relative;
+		}
+
+		&__description {
+			max-width: 316px;
+
+			@include desktop {
+				max-width: 380px;
+			}
+		}
+
+		&__list {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			background: var(--color-black);
+			border-bottom: 1px dashed
+				color-mix(in srgb, var(--color-ivory) 30%, transparent);
+
+			@include desktop {
+				width: calc((100% + 20px) / 12 * 8 - 20px);
+				margin-inline: auto;
+			}
+		}
+	}
+
+	:global(.faq__cup) {
+		position: absolute;
+		right: -0.42em;
+		bottom: calc(0.4em + 20px);
+		width: 1.57em;
+		aspect-ratio: 320 / 124;
+		animation: faq-cup-float 10s ease-in-out infinite;
+	}
+
+	:global(.faq__cup .icon__svg) {
+		overflow: visible;
+	}
+
+	:global(.faq__cup .icon__shape) {
+		fill: var(--color-black);
+		stroke: var(--color-ivory);
+	}
+
+	@keyframes faq-cup-float {
+		0%,
+		100% {
+			transform: translateY(-5px) rotate(-3deg);
+		}
+
+		50% {
+			transform: translateY(5px) rotate(3deg);
+		}
+	}
+</style>

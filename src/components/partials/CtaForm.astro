@@ -1,0 +1,77 @@
+---
+import Form from '../ui/Form.astro'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+---
+
+<section class='cta-form' data-header-theme='dark'>
+	<div class='cta-form__inner container'>
+		<div class='cta-form__header'>
+			<h2 class='cta-form__title h3'>{t.cta.title}</h2>
+			<p class='cta-form__description txt-md'>{t.cta.description}</p>
+		</div>
+		<div class='cta-form__body'>
+			<Form submitLabel={t.form.submit} />
+		</div>
+	</div>
+</section>
+
+<style lang='scss'>
+	.cta-form {
+		position: relative;
+		background: var(--color-orange);
+		color: var(--color-black);
+
+		@include desktop {
+			display: flex;
+			align-items: center;
+			height: 100vh;
+		}
+
+		&__inner {
+			display: grid;
+			row-gap: 400px;
+			padding-block: fluid(120, 100);
+
+			@include tablet {
+				row-gap: 500px;
+			}
+
+			@include desktop {
+				row-gap: 20px;
+				grid-template-columns: 8fr 4fr;
+				align-items: start;
+				column-gap: 20px;
+			}
+		}
+
+		&__header {
+			display: flex;
+			flex-direction: column;
+			align-items: start;
+			row-gap: fluid(30, 20);
+		}
+
+		&__title {
+			margin-top: auto;
+
+			@include tablet {
+				max-width: 480px;
+			}
+
+			@include desktop {
+				max-width: 650px;
+			}
+		}
+
+		&__description {
+			max-width: 471px;
+			margin-bottom: 10px;
+		}
+
+		&__inner > :last-child {
+			margin-bottom: auto;
+		}
+	}
+</style>

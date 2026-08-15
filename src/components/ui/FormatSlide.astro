@@ -1,0 +1,187 @@
+---
+import Button from '@/components/ui/Button.astro'
+import { Image } from 'astro:assets'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+
+const { image, title, description, number, minimage, background, metrics } =
+	Astro.props
+---
+
+<article
+	class='format-slide'
+	style={`--format-slide-background: ${background}`}
+	data-js-formats-slide
+>
+	<Image
+		class='format-slide__image'
+		src={image}
+		alt=''
+		loading='lazy'
+	/>
+	<div class='format-slide__content'>
+		<div class='format-slide__header'>
+			<div class='format-slide__offer'>
+				<h2 class='format-slide__title h3'>{title}</h2>
+				<p class='format-slide__description txt-md'>{description}</p>
+				<Button label={t.common.apply} />
+				<span class='format-slide__number txt-bold'>{number}<span class="format-slide__number--light">/03</span></span>
+			</div>
+		</div>
+		<div class='format-slide__body'>
+			<div class='format-slide__info'>
+				<ul class='format-metrics'>
+					{
+						metrics.map((metric, index) => (
+							<li
+								class:list={[
+									'format-metrics__item',
+									index === 0 && 'format-metrics__item--full'
+								]}
+							>
+								<span class='format-metrics__caption txt-btn'>
+									{metric.caption}
+								</span>
+								<span class='format-metrics__point txt-bold'>
+									{metric.point}
+								</span>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+			<Image
+				class='format-slide__min-image'
+				src={minimage}
+				alt=''
+				loading='lazy'
+			/>
+		</div>
+	</div>
+</article>
+
+<style lang='scss'>
+	.format-slide {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 40svh 1fr;
+		overflow: hidden;
+		clip-path: inset(100% 0 0 0);
+
+		&:first-child {
+			clip-path: inset(0 0 0 0);
+		}
+
+		@include desktop {
+			grid-template-columns: repeat(12, minmax(0, 1fr));
+			grid-template-rows: minmax(0, 1fr);
+			column-gap: 20px;
+			background: var(--format-slide-background, var(--color-ivory));
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			position: relative;
+			min-height: 100svh;
+			clip-path: none;
+		}
+
+		&__image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+
+			@include desktop {
+				grid-column: span 5;
+			}
+		}
+
+		&__content {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			padding: fluid(50, 20) var(--container-padding-x) fluid(30, 20);
+			background: var(--format-slide-background, var(--color-ivory));
+
+			@include desktop {
+				grid-column: span 7;
+			}
+		}
+
+		&__offer {
+			position: relative;
+		}
+
+		&__number {
+			position: absolute;
+			right: 0;
+			top: 0;
+
+      &--light {
+        opacity: 40%;
+      }
+		}
+
+		&__description {
+			margin-block: 16px 32px;
+
+			@include tablet {
+				margin-top: 20px;
+			}
+
+			@include desktop {
+				margin-block: 30px 110px;
+			}
+		}
+
+		&__body {
+			@include tablet {
+				display: grid;
+				grid-template-columns: repeat(9, minmax(0, 1fr));
+				gap: 16px;
+			}
+		}
+
+		&__info {
+			@include tablet {
+				grid-column: span 5;
+				align-self: center;
+			}
+		}
+
+		&__min-image {
+			display: none;
+
+			@include tablet {
+				display: block;
+				grid-column: span 4;
+				width: 100%;
+			}
+		}
+	}
+
+	.format-metrics {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		gap: 50px 16px;
+
+		&__item {
+			display: grid;
+			row-gap: fluid(10, 8);
+
+			&:nth-child(2) {
+				grid-column: span 2;
+			}
+
+			&:nth-child(3) {
+				grid-column: span 3;
+			}
+
+			&--full {
+				grid-column: 1 / -1;
+			}
+		}
+	}
+</style>
