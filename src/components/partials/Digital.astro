@@ -27,12 +27,13 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 					<Phone class='digital__phone-shape' />
 					<video
 						class='digital__phone-video'
-						src='/smartphone.mp4'
+						data-js-digital-video
+						data-src='/smartphone.mp4'
 						autoplay
 						muted
 						loop
 						playsinline
-						preload='metadata'
+						preload='none'
 					>
 					</video>
 				</div>
@@ -159,9 +160,14 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 			}
 		}
 
-		&.is-ending &__header,
-		&.is-ending &__body {
+		&.is-ending &__header {
 			opacity: 0;
+		}
+
+		@include desktop {
+			&.is-ending &__body {
+				opacity: 0;
+			}
 		}
 
 		&__list {
@@ -287,6 +293,25 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 </style>
 
 <script>
+	document.querySelectorAll<HTMLVideoElement>('[data-js-digital-video]').forEach(video => {
+		const source = video.dataset.src
+
+		if (!source) return
+
+		const videoObserver = new IntersectionObserver(
+			entries => {
+				if (!entries.some(entry => entry.isIntersecting)) return
+
+				videoObserver.disconnect()
+				video.src = source
+				video.play().catch(() => undefined)
+			},
+			{ rootMargin: '200px 0px' }
+		)
+
+		videoObserver.observe(video)
+	})
+
 	document.querySelectorAll<HTMLElement>('[data-digital]').forEach(section => {
 		const endSection = section.querySelector<HTMLElement>('.benefits')
 

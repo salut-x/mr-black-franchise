@@ -21,6 +21,14 @@ html {
   &.is-lock {
     overflow: hidden;
   }
+
+	@include mobile-only {
+		@media (width >= 360px) {
+			--fluid-viewport-width: 390px;
+
+			overflow-x: clip;
+		}
+	}
 }
 
 
@@ -29,6 +37,13 @@ body {
   flex-direction: column;
   margin: 0;
   min-height: 100vh;
+
+	@include mobile-only {
+		@media (width >= 360px) {
+			width: 390px;
+			zoom: calc(100vw / 390px);
+		}
+	}
 
 	&::before {
 		content: '';
@@ -41,6 +56,11 @@ body {
 		pointer-events: none;
 		will-change: transform;
 		animation: global-noise 0.5s steps(1, end) infinite;
+
+		@include mobile-only {
+			will-change: auto;
+			animation: none;
+		}
 	}
 }
 

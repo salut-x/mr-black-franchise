@@ -28,6 +28,11 @@ class CameraParallax {
 		this.reduceMotionMedia = window.matchMedia(
 			'(prefers-reduced-motion: reduce)',
 		)
+		this.pointerMedia = window.matchMedia('(pointer: fine)')
+
+		if (!this.pointerMedia.matches || this.reduceMotionMedia.matches) {
+			return
+		}
 
 		const { duration, ease } = this.options
 

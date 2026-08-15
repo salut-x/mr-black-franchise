@@ -5,12 +5,11 @@ gsap.registerPlugin(ScrollTrigger)
 
 class Formats {
 	selectors = {
+		reveal: '[data-js-formats-reveal]',
 		slide: '[data-js-formats-slide]',
 	}
 
 	animation = {
-		clipPathHidden: 'inset(100% 0% 0% 0%)',
-		clipPathVisible: 'inset(0% 0% 0% 0%)',
 		ease: 'none',
 		// Пин обновляется раньше триггеров ниже по странице, иначе они считают
 		// свои позиции без его pin-spacer. Заодно включает сортировку триггеров.
@@ -33,41 +32,65 @@ class Formats {
 			return
 		}
 
-		this.media.add('(prefers-reduced-motion: no-preference)', () => {
-			const timeline = gsap.timeline()
+		this.media.add(
+			'(min-width: 768px) and (prefers-reduced-motion: no-preference)',
+			() => {
+				const timeline = gsap.timeline()
 
-			this.slideElements.slice(1).forEach((slideElement, index) => {
-				timeline.fromTo(
-					slideElement,
-					{
-						clipPath: this.animation.clipPathHidden,
-					},
-					{
-						clipPath: this.animation.clipPathVisible,
-						duration: 1,
-						ease: this.animation.ease,
-					},
-					index,
-				)
-			})
+				this.slideElements.slice(1).forEach((slideElement, index) => {
+					const revealElement = slideElement.querySelector(
+						this.selectors.reveal,
+					)
 
-			const scrollTrigger = ScrollTrigger.create({
-				trigger: this.rootElement,
-				start: 'top top',
-				end: () =>
-					`+=${(this.slideElements.length - 1) * this.rootElement.offsetHeight}`,
-				pin: true,
-				refreshPriority: this.animation.refreshPriority,
-				scrub: this.animation.scrub,
-				animation: timeline,
-				invalidateOnRefresh: true,
-			})
+					if (!revealElement) {
+						return
+					}
 
-			return () => {
-				scrollTrigger.kill()
-				timeline.kill()
-			}
-		})
+					timeline
+						.fromTo(
+							slideElement,
+							{
+								yPercent: 100,
+							},
+							{
+								duration: 1,
+								ease: this.animation.ease,
+								yPercent: 0,
+							},
+							index,
+						)
+						.fromTo(
+							revealElement,
+							{
+								yPercent: -100,
+							},
+							{
+								duration: 1,
+								ease: this.animation.ease,
+								yPercent: 0,
+							},
+							index,
+						)
+				})
+
+				const scrollTrigger = ScrollTrigger.create({
+					trigger: this.rootElement,
+					start: 'top top',
+					end: () =>
+						`+=${(this.slideElements.length - 1) * this.rootElement.offsetHeight}`,
+					pin: true,
+					refreshPriority: this.animation.refreshPriority,
+					scrub: this.animation.scrub,
+					animation: timeline,
+					invalidateOnRefresh: true,
+				})
+
+				return () => {
+					scrollTrigger.kill()
+					timeline.kill()
+				}
+			},
+		)
 	}
 
 	destroy() {

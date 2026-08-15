@@ -49,12 +49,14 @@ const terms = t.terms.items.map(([caption, title, description], index) => ({ id:
 
 <section id='conditions' class='key-terms' data-header-theme='none'>
 	<div class='key-terms__inner'>
-		<div class='key-terms__media'>
+		<div class='key-terms__media' data-header-theme-mobile='dark'>
 			<Image
 				class='key-terms__image'
 				src={bigImage}
 				alt=''
 				loading='lazy'
+				widths={[640, 960, 1600]}
+				sizes='100vw'
 			/>
 			<div class='key-terms__intro'>
 				<p class='key-terms__caption txt-md'>
@@ -63,7 +65,7 @@ const terms = t.terms.items.map(([caption, title, description], index) => ({ id:
 				<h2 class='key-terms__title'>{t.terms.title}</h2>
 			</div>
 		</div>
-		<div class='key-terms__panel'>
+		<div class='key-terms__panel' data-header-theme-mobile='light'>
 			<div class='key-terms__panel-content'>
 				<div class='key-terms__header'>
 					<span class='key-terms__badge descriptor'>{t.terms.badge}</span>

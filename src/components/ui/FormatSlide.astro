@@ -1,7 +1,7 @@
 ---
 import Button from '@/components/ui/Button.astro'
-import { Image } from 'astro:assets'
 import { getCopy } from '@/data/i18n.js'
+import { Image } from 'astro:assets'
 
 const t = getCopy(Astro.url.pathname)
 
@@ -14,78 +14,106 @@ const { image, title, description, number, minimage, background, metrics } =
 	style={`--format-slide-background: ${background}`}
 	data-js-formats-slide
 >
-	<Image
-		class='format-slide__image'
-		src={image}
-		alt=''
-		loading='lazy'
-	/>
-	<div class='format-slide__content'>
-		<div class='format-slide__header'>
-			<div class='format-slide__offer'>
-				<h2 class='format-slide__title h3'>{title}</h2>
-				<p class='format-slide__description txt-md'>{description}</p>
-				<Button label={t.common.apply} />
-				<span class='format-slide__number txt-bold'>{number}<span class="format-slide__number--light">/03</span></span>
+	<div
+		class='format-slide__reveal'
+		data-js-formats-reveal
+	>
+		<Image
+			class='format-slide__image'
+			src={image}
+			alt=''
+			loading='lazy'
+			widths={[420, 660]}
+			sizes='(min-width: 1024px) 42vw, 100vw'
+		/>
+		<div class='format-slide__content'>
+			<div class='format-slide__header'>
+				<div class='format-slide__offer'>
+					<h2 class='format-slide__title h3'>{title}</h2>
+					<p class='format-slide__description txt-md'>{description}</p>
+					<Button label={t.common.apply} />
+					<span class='format-slide__number txt-bold'>
+						{number}<span class='format-slide__number--light'>/03</span>
+					</span>
+				</div>
 			</div>
-		</div>
-		<div class='format-slide__body'>
-			<div class='format-slide__info'>
-				<ul class='format-metrics'>
-					{
-						metrics.map((metric, index) => (
-							<li
-								class:list={[
-									'format-metrics__item',
-									index === 0 && 'format-metrics__item--full'
-								]}
-							>
-								<span class='format-metrics__caption txt-btn'>
-									{metric.caption}
-								</span>
-								<span class='format-metrics__point txt-bold'>
-									{metric.point}
-								</span>
-							</li>
-						))
-					}
-				</ul>
+			<div class='format-slide__body'>
+				<div class='format-slide__info'>
+					<ul class='format-metrics'>
+						{
+							metrics.map((metric, index) => (
+								<li
+									class:list={[
+										'format-metrics__item',
+										index === 0 && 'format-metrics__item--full'
+									]}
+								>
+									<span class='format-metrics__caption txt-btn'>
+										{metric.caption}
+									</span>
+									<span class='format-metrics__point txt-bold'>
+										{metric.point}
+									</span>
+								</li>
+							))
+						}
+					</ul>
+				</div>
+				<Image
+					class='format-slide__min-image'
+					src={minimage}
+					alt=''
+					loading='lazy'
+					widths={[180, 370]}
+					sizes='(min-width: 768px) 26vw, 180px'
+				/>
 			</div>
-			<Image
-				class='format-slide__min-image'
-				src={minimage}
-				alt=''
-				loading='lazy'
-			/>
 		</div>
 	</div>
 </article>
 
 <style lang='scss'>
 	.format-slide {
-		position: absolute;
-		inset: 0;
-		display: grid;
-		grid-template-columns: 1fr;
-		grid-template-rows: 40svh 1fr;
+		position: relative;
 		overflow: hidden;
-		clip-path: inset(100% 0 0 0);
 
-		&:first-child {
-			clip-path: inset(0 0 0 0);
+		@include mobile-only {
+			height: 100vh;
+			height: 100lvh;
+		}
+
+		@include tablet {
+			position: absolute;
+			inset: 0;
+		}
+
+		&__reveal {
+			display: grid;
+			grid-template-columns: 1fr;
+			grid-template-rows: 40svh 1fr;
+			height: 100%;
+
+			@include desktop {
+				grid-template-columns: repeat(12, minmax(0, 1fr));
+				grid-template-rows: minmax(0, 1fr);
+				column-gap: 20px;
+				background: var(--format-slide-background, var(--color-ivory));
+			}
 		}
 
 		@include desktop {
-			grid-template-columns: repeat(12, minmax(0, 1fr));
-			grid-template-rows: minmax(0, 1fr);
-			column-gap: 20px;
 			background: var(--format-slide-background, var(--color-ivory));
 		}
 
 		@media (prefers-reduced-motion: reduce) {
 			position: relative;
-			min-height: 100svh;
-			clip-path: none;
+			min-height: 100vh;
+			min-height: 100lvh;
+			transform: none;
+
+			&__reveal {
+				transform: none;
+			}
 		}
 
 		&__image {
@@ -102,6 +130,7 @@ const { image, title, description, number, minimage, background, metrics } =
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
+			gap: 24px;
 			padding: fluid(50, 20) var(--container-padding-x) fluid(30, 20);
 			background: var(--format-slide-background, var(--color-ivory));
 
@@ -119,9 +148,9 @@ const { image, title, description, number, minimage, background, metrics } =
 			right: 0;
 			top: 0;
 
-      &--light {
-        opacity: 40%;
-      }
+			&--light {
+				opacity: 40%;
+			}
 		}
 
 		&__description {

@@ -139,7 +139,9 @@ const homeHref = Astro.url.pathname.startsWith('/en') ? '/en' : '/'
 			background-color: var(--color-ivory);
 			color: var(--color-black);
 			cursor: pointer;
-			transition: background-color var(--transition-duration);
+			transition:
+				background-color var(--transition-duration),
+				color var(--transition-duration);
 
 			@include mobile-only {
 				grid-template-columns: minmax(0, 1fr) 68px;

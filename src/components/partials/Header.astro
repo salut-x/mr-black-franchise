@@ -354,6 +354,19 @@ const desktopNavigation = mainNavigation.filter(
 		color: var(--color-white);
 	}
 
+	:global(.header--dark .main-menu:not(.is-open) .main-menu__toggle) {
+		background-color: var(--color-black);
+		color: var(--color-ivory);
+	}
+
+	:global(.header--dark .main-menu:not(.is-open) .main-menu__icon) {
+		border-left-color: color-mix(
+			in srgb,
+			var(--color-ivory) 30%,
+			transparent
+		);
+	}
+
 	:global(.header:has(.main-menu.is-panel-visible)) {
 		transform: none;
 		transition: none;

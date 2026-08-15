@@ -27,6 +27,7 @@ class HeroModel {
 		// тем дольше стакан уезжает вниз.
 		exitOffsetStart: 0.35,
 		offscreenGap: 20,
+		modelFrameDuration: 1000 / 30,
 	}
 
 	constructor(rootElement) {
@@ -42,6 +43,17 @@ class HeroModel {
 			this.rootElement.querySelectorAll(this.selectors.interaction),
 		)
 		this.isModelLoaded = false
+		this.cupMaterials = []
+		this.lastExitOffsetY = null
+		this.lastModelUpdateTime = 0
+		this.modelUpdateTimer = null
+		this.pendingModelState = null
+		this.lastModelState = {
+			backLogoOpacity: null,
+			color: null,
+			frontLogoOpacity: null,
+			rotation: null,
+		}
 		this.scrollAnimation = {
 			backLogoOpacity: 0,
 			color: '',
@@ -53,31 +65,103 @@ class HeroModel {
 	}
 
 	onModelLoad = () => {
+		if (this.isModelLoaded) {
+			return
+		}
+
 		this.isModelLoaded = true
-		this.setInitialCupColor()
 		this.initLogoMaterials()
+		this.setInitialCupColor()
 		this.initScrollAnimation()
 		this.initExitScrollAnimation()
 	}
 
 	onScrollAnimationUpdate = () => {
-		this.modelElement.style.setProperty(
-			'--hero-model-exit-y',
-			`${this.scrollAnimation.exitOffsetY}px`,
-		)
-		this.modelElement.setAttribute(
-			'orientation',
-			`0deg 0deg ${this.scrollAnimation.rotation}deg`,
-		)
-		this.setCupColor(this.scrollAnimation.color)
-		this.setLogoOpacity(
-			this.frontLogoMaterial,
-			this.scrollAnimation.frontLogoOpacity,
-		)
-		this.setLogoOpacity(
-			this.backLogoMaterial,
-			this.scrollAnimation.backLogoOpacity,
-		)
+		const exitOffsetY =
+			Math.round(this.scrollAnimation.exitOffsetY * 100) / 100
+
+		if (exitOffsetY !== this.lastExitOffsetY) {
+			this.lastExitOffsetY = exitOffsetY
+			this.modelElement.style.setProperty(
+				'--hero-model-exit-y',
+				`${exitOffsetY}px`,
+			)
+		}
+
+		this.pendingModelState = {
+			backLogoOpacity:
+				Math.round(this.scrollAnimation.backLogoOpacity * 1000) / 1000,
+			color: this.scrollAnimation.color,
+			frontLogoOpacity:
+				Math.round(this.scrollAnimation.frontLogoOpacity * 1000) / 1000,
+			rotation: Math.round(this.scrollAnimation.rotation * 100) / 100,
+		}
+		this.requestModelUpdate()
+	}
+
+	requestModelUpdate() {
+		const elapsed = performance.now() - this.lastModelUpdateTime
+		const remaining = this.animation.modelFrameDuration - elapsed
+
+		if (remaining <= 0) {
+			this.applyModelState()
+			return
+		}
+
+		if (this.modelUpdateTimer) {
+			return
+		}
+
+		this.modelUpdateTimer = window.setTimeout(() => {
+			this.modelUpdateTimer = null
+			this.applyModelState()
+		}, remaining)
+	}
+
+	applyModelState() {
+		if (!this.pendingModelState) {
+			return
+		}
+
+		const {
+			backLogoOpacity,
+			color,
+			frontLogoOpacity,
+			rotation,
+		} = this.pendingModelState
+
+		this.lastModelUpdateTime = performance.now()
+
+		if (rotation !== this.lastModelState.rotation) {
+			this.lastModelState.rotation = rotation
+			this.modelElement.setAttribute(
+				'orientation',
+				`0deg 0deg ${rotation}deg`,
+			)
+		}
+
+		if (color && color !== this.lastModelState.color) {
+			this.lastModelState.color = color
+			this.setCupColor(color)
+		}
+
+		if (frontLogoOpacity !== this.lastModelState.frontLogoOpacity) {
+			this.lastModelState.frontLogoOpacity = frontLogoOpacity
+			this.setLogoOpacity(
+				this.frontLogoMaterial,
+				this.frontLogoColor,
+				frontLogoOpacity,
+			)
+		}
+
+		if (backLogoOpacity !== this.lastModelState.backLogoOpacity) {
+			this.lastModelState.backLogoOpacity = backLogoOpacity
+			this.setLogoOpacity(
+				this.backLogoMaterial,
+				this.backLogoColor,
+				backLogoOpacity,
+			)
+		}
 	}
 
 	getOffscreenOffset() {
@@ -93,9 +177,7 @@ class HeroModel {
 	}
 
 	getCupMaterials() {
-		return this.materialNames.cup.map(
-			materialName => this.modelElement.model?.getMaterialByName(materialName),
-		)
+		return this.cupMaterials
 	}
 
 	setCupColor(color) {
@@ -108,16 +190,12 @@ class HeroModel {
 		})
 	}
 
-	setLogoOpacity(logoMaterial, opacity) {
-		if (!logoMaterial) {
+	setLogoOpacity(logoMaterial, baseColor, opacity) {
+		if (!logoMaterial || !baseColor) {
 			return
 		}
 
-		const color = [
-			...logoMaterial.pbrMetallicRoughness.baseColorFactor,
-		]
-
-		color[3] = opacity
+		const color = [baseColor[0], baseColor[1], baseColor[2], opacity]
 		logoMaterial.pbrMetallicRoughness.setBaseColorFactor(color)
 	}
 
@@ -125,21 +203,33 @@ class HeroModel {
 		const cupColor = this.getColor('--color-white')
 
 		this.scrollAnimation.color = cupColor
+		this.lastModelState.color = cupColor
 		this.setCupColor(cupColor)
 	}
 
 	initLogoMaterials() {
+		this.cupMaterials = this.materialNames.cup.map(
+			materialName => this.modelElement.model?.getMaterialByName(materialName),
+		)
 		this.frontLogoMaterial = this.modelElement.model?.getMaterialByName(
 			this.materialNames.frontLogo,
 		)
 		this.backLogoMaterial = this.modelElement.model?.getMaterialByName(
 			this.materialNames.backLogo,
 		)
+		this.frontLogoColor = [
+			...(this.frontLogoMaterial?.pbrMetallicRoughness.baseColorFactor || []),
+		]
+		this.backLogoColor = [
+			...(this.backLogoMaterial?.pbrMetallicRoughness.baseColorFactor || []),
+		]
 
 		this.frontLogoMaterial?.setAlphaMode('BLEND')
 		this.backLogoMaterial?.setAlphaMode('BLEND')
-		this.setLogoOpacity(this.frontLogoMaterial, 1)
-		this.setLogoOpacity(this.backLogoMaterial, 0)
+		this.setLogoOpacity(this.frontLogoMaterial, this.frontLogoColor, 1)
+		this.setLogoOpacity(this.backLogoMaterial, this.backLogoColor, 0)
+		this.lastModelState.frontLogoOpacity = 1
+		this.lastModelState.backLogoOpacity = 0
 	}
 
 	initScrollAnimation() {
@@ -260,6 +350,7 @@ class HeroModel {
 	}
 
 	destroy() {
+		window.clearTimeout(this.modelUpdateTimer)
 		this.cameraParallax?.destroy()
 		this.modelElement.removeEventListener('load', this.onModelLoad)
 		this.scrollTimeline?.scrollTrigger?.kill()

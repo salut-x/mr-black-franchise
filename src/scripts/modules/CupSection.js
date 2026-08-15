@@ -34,7 +34,18 @@ class CupSection {
 		spin: 360,
 		offscreenGap: 20,
 		pinMaxWidth: 768,
+		modelFrameDuration: 1000 / 30,
 	}
+
+	modelAttributes = {
+		cameraOrbit: '-20deg 75deg auto',
+		fieldOfView: '30deg',
+		interactionPrompt: 'none',
+		shadowIntensity: '0',
+	}
+
+	// Секции лежат ниже сгиба: чанк model-viewer тянем не раньше подхода к вьюпорту.
+	viewerRootMargin = '100% 0px'
 
 	// Полный оборот, серединой которого стакан выходит на логотип.
 	get startRotation() {
@@ -48,7 +59,14 @@ class CupSection {
 	constructor(rootElement) {
 		this.rootElement = rootElement
 		this.modelElement = rootElement.querySelector(this.selectors.model)
+		this.modelPlaceholderElement = this.modelElement
 		this.isModelLoaded = false
+		this.metrics = null
+		this.lastOffset = null
+		this.lastRotation = null
+		this.lastModelUpdateTime = 0
+		this.pendingRotation = this.startRotation
+		this.modelUpdateTimer = null
 
 		this.init()
 	}
@@ -61,7 +79,6 @@ class CupSection {
 		this.isModelLoaded = true
 		this.applyCupColor()
 		this.applyLogo()
-		ScrollTrigger.refresh()
 	}
 
 	onWindowLoad = () => {
@@ -69,26 +86,121 @@ class CupSection {
 	}
 
 	onScrollTriggerUpdate = self => {
-		const pinOffset = this.getPinOffset()
+		if (!this.metrics) {
+			this.updateMetrics()
+		}
+
+		const { pinOffset, landedProgress } = this.metrics
 
 		this.rootElement.classList.toggle(
 			this.stateClasses.landed,
-			pinOffset !== null && this.rootElement.getBoundingClientRect().top <= 0,
+			pinOffset !== null && self.progress >= landedProgress,
 		)
 		this.render(
-			pinOffset === null ? self.progress : this.getMobilePinProgress(),
+			pinOffset === null
+				? self.progress
+				: this.getMobilePinProgress(self.progress),
 		)
 	}
 
+	onScrollTriggerRefresh = self => {
+		this.updateMetrics()
+		this.onScrollTriggerUpdate(self)
+	}
+
 	render(progress) {
-		this.modelElement.style.setProperty(
-			'--cup-offset-y',
-			`${this.getOffsetAt(progress)}px`,
-		)
+		const offset = Math.round(this.getOffsetAt(progress) * 100) / 100
+
+		if (offset !== this.lastOffset) {
+			this.lastOffset = offset
+			this.modelElement.style.setProperty('--cup-offset-y', `${offset}px`)
+		}
+
+		this.requestModelRotation(this.getRotationAt(progress))
+	}
+
+	requestModelRotation(rotation) {
+		this.pendingRotation = Math.round(rotation * 100) / 100
+
+		const elapsed = performance.now() - this.lastModelUpdateTime
+		const remaining = this.animation.modelFrameDuration - elapsed
+
+		if (remaining <= 0) {
+			this.applyModelRotation()
+			return
+		}
+
+		if (this.modelUpdateTimer) {
+			return
+		}
+
+		this.modelUpdateTimer = window.setTimeout(() => {
+			this.modelUpdateTimer = null
+			this.applyModelRotation()
+		}, remaining)
+	}
+
+	applyModelRotation() {
+		if (this.pendingRotation === this.lastRotation) {
+			return
+		}
+
+		this.lastRotation = this.pendingRotation
+		this.lastModelUpdateTime = performance.now()
 		this.modelElement.setAttribute(
 			'orientation',
-			`0deg 0deg ${this.getRotationAt(progress)}deg`,
+			`0deg 0deg ${this.lastRotation}deg`,
 		)
+	}
+
+	mountModel() {
+		const modelSource = this.modelPlaceholderElement.dataset.modelSrc
+
+		if (!modelSource) {
+			return false
+		}
+
+		const modelElement = document.createElement('model-viewer')
+		const modelAlt = this.modelPlaceholderElement.getAttribute('aria-label')
+		const modelOrientation = this.modelPlaceholderElement.getAttribute(
+			'orientation',
+		)
+
+		modelElement.className = this.modelPlaceholderElement.className
+		modelElement.style.cssText = this.modelPlaceholderElement.style.cssText
+		this.modelPlaceholderElement
+			.getAttributeNames()
+			.filter(attributeName => attributeName.startsWith('data-astro-'))
+			.forEach(attributeName => {
+				modelElement.setAttribute(
+					attributeName,
+					this.modelPlaceholderElement.getAttribute(attributeName) || '',
+				)
+			})
+		modelElement.setAttribute('alt', modelAlt || '')
+		modelElement.setAttribute('camera-orbit', this.modelAttributes.cameraOrbit)
+		modelElement.setAttribute('field-of-view', this.modelAttributes.fieldOfView)
+		modelElement.setAttribute(
+			'interaction-prompt',
+			this.modelAttributes.interactionPrompt,
+		)
+		modelElement.setAttribute(
+			'orientation',
+			modelOrientation || `0deg 0deg ${this.startRotation}deg`,
+		)
+		modelElement.setAttribute(
+			'shadow-intensity',
+			this.modelAttributes.shadowIntensity,
+		)
+		modelElement.setAttribute('loading', 'eager')
+		modelElement.setAttribute('data-js-cup-view', '')
+		modelElement.addEventListener('load', this.onModelLoad)
+
+		this.modelPlaceholderElement.replaceWith(modelElement)
+		this.modelElement = modelElement
+		this.modelElement.setAttribute('src', modelSource)
+
+		return true
 	}
 
 	getMaterial(materialName) {
@@ -150,13 +262,7 @@ class CupSection {
 		})
 	}
 
-	getOffscreenOffset() {
-		const modelHeight = this.modelElement.getBoundingClientRect().height
-
-		return (window.innerHeight + modelHeight) / 2 + this.animation.offscreenGap
-	}
-
-	getPinOffset() {
+	getPinOffset(modelHeight, viewportHeight) {
 		const { cupPinTop, cupPinMaxWidth } = this.rootElement.dataset
 		const pinTop = Number(cupPinTop)
 		const pinMaxWidth = Number(cupPinMaxWidth) || this.animation.pinMaxWidth
@@ -165,15 +271,15 @@ class CupSection {
 			return null
 		}
 
-		const modelHeight = this.modelElement.getBoundingClientRect().height
-
-		return pinTop + modelHeight / 2 - window.innerHeight / 2
+		return pinTop + modelHeight / 2 - viewportHeight / 2
 	}
 
-	getMobilePinProgress() {
-		const sectionTop = this.rootElement.getBoundingClientRect().top
-
-		return gsap.utils.clamp(0, 1, 1 - sectionTop / window.innerHeight)
+	getMobilePinProgress(progress) {
+		return gsap.utils.clamp(
+			0,
+			1,
+			progress * this.metrics.mobileProgressScale,
+		)
 	}
 
 	/**
@@ -182,10 +288,7 @@ class CupSection {
 	 * ни длилась секция. На секции ростом с экран обе границы сходятся в 0.5 —
 	 * получается сквозной пролёт, как у CTA.
 	 */
-	getFlightRange() {
-		const viewportRatio =
-			window.innerHeight / (this.rootElement.offsetHeight + window.innerHeight)
-
+	getFlightRange(viewportRatio) {
 		return {
 			enterEnd: Math.min(viewportRatio, 0.5),
 			exitStart: Math.max(1 - viewportRatio, 0.5),
@@ -193,23 +296,25 @@ class CupSection {
 	}
 
 	getOffsetAt(progress) {
-		const offscreen = this.getOffscreenOffset()
-		const pin = this.getPinOffset()
+		const {
+			enterEnd,
+			exitStart,
+			offscreenOffset,
+			pinOffset,
+		} = this.metrics
 
-		if (pin !== null) {
-			return gsap.utils.interpolate(-offscreen, pin, progress)
+		if (pinOffset !== null) {
+			return gsap.utils.interpolate(-offscreenOffset, pinOffset, progress)
 		}
 
-		const { enterEnd, exitStart } = this.getFlightRange()
-
 		if (progress <= enterEnd) {
-			return gsap.utils.interpolate(-offscreen, 0, progress / enterEnd)
+			return gsap.utils.interpolate(-offscreenOffset, 0, progress / enterEnd)
 		}
 
 		if (progress >= exitStart) {
 			return gsap.utils.interpolate(
 				0,
-				offscreen,
+				offscreenOffset,
 				(progress - exitStart) / (1 - exitStart),
 			)
 		}
@@ -225,11 +330,31 @@ class CupSection {
 		)
 	}
 
+	updateMetrics() {
+		const viewportHeight = window.innerHeight
+		const modelHeight = this.modelElement.getBoundingClientRect().height
+		const sectionHeight = this.rootElement.offsetHeight
+		const triggerDistance = sectionHeight + viewportHeight
+		const viewportRatio = viewportHeight / triggerDistance
+		const { enterEnd, exitStart } = this.getFlightRange(viewportRatio)
+
+		this.metrics = {
+			enterEnd,
+			exitStart,
+			landedProgress: viewportRatio,
+			mobileProgressScale: triggerDistance / viewportHeight,
+			offscreenOffset:
+				(viewportHeight + modelHeight) / 2 + this.animation.offscreenGap,
+			pinOffset: this.getPinOffset(modelHeight, viewportHeight),
+		}
+	}
+
 	initScrollAnimation() {
 		if (this.scrollTrigger) {
 			return
 		}
 
+		this.updateMetrics()
 		this.render(0)
 
 		this.scrollTrigger = ScrollTrigger.create({
@@ -237,9 +362,27 @@ class CupSection {
 			start: 'top bottom',
 			end: 'bottom top',
 			onUpdate: this.onScrollTriggerUpdate,
-			onRefresh: this.onScrollTriggerUpdate,
+			onRefresh: this.onScrollTriggerRefresh,
 			onLeave: this.onScrollTriggerUpdate,
 			onLeaveBack: this.onScrollTriggerUpdate,
+		})
+	}
+
+	whenNearViewport() {
+		return new Promise(resolve => {
+			this.viewerObserver = new IntersectionObserver(
+				entries => {
+					if (!entries.some(entry => entry.isIntersecting)) {
+						return
+					}
+
+					this.viewerObserver.disconnect()
+					resolve()
+				},
+				{ rootMargin: this.viewerRootMargin },
+			)
+
+			this.viewerObserver.observe(this.rootElement)
 		})
 	}
 
@@ -248,10 +391,14 @@ class CupSection {
 			return
 		}
 
-		this.modelElement.addEventListener('load', this.onModelLoad)
 		window.addEventListener('load', this.onWindowLoad, { once: true })
 		this.initScrollAnimation()
+		await this.whenNearViewport()
 		await loadModelViewer()
+
+		if (!this.mountModel()) {
+			return
+		}
 
 		this.cameraParallax = new CameraParallax(this.modelElement, [
 			this.rootElement,
@@ -265,6 +412,8 @@ class CupSection {
 	destroy() {
 		this.modelElement?.removeEventListener('load', this.onModelLoad)
 		window.removeEventListener('load', this.onWindowLoad)
+		this.viewerObserver?.disconnect()
+		window.clearTimeout(this.modelUpdateTimer)
 		this.cameraParallax?.destroy()
 		this.rootElement.classList.remove(this.stateClasses.landed)
 		this.scrollTrigger?.kill()

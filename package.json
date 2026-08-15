@@ -6,6 +6,7 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "build:fonts": "./scripts/build-fonts.sh",
     "build:model": "./scripts/build-model.sh",
     "dev": "astro dev",
     "build": "astro build",

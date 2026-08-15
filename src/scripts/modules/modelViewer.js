@@ -11,7 +11,9 @@ let loading
  */
 export default function loadModelViewer() {
 	loading ??= (async () => {
-		await import('@google/model-viewer')
+		const { ModelViewerElement } = await import('@google/model-viewer')
+
+		ModelViewerElement.dracoDecoderLocation = '/draco/'
 
 		try {
 			const { Renderer } = await import(

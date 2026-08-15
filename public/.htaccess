@@ -1,0 +1,38 @@
+# Кэш и сжатие для файлов, которые на рег.ру отдаёт Apache.
+#
+# nginx там перехватывает css/js/svg/png/mp4 своим правилом `expires 45d`
+# и до Apache их не доводит — этот файл на них не влияет.
+# Всё остальное (html, webp, woff2, wasm, glb, ico) проксируется в Apache,
+# и без правил ниже уходит вообще без Cache-Control.
+
+<IfModule mod_mime.c>
+	AddType application/wasm .wasm
+	AddType model/gltf-binary .glb
+	AddType image/webp .webp
+	AddType font/woff2 .woff2
+</IfModule>
+
+<IfModule mod_deflate.c>
+	# woff2/webp/glb уже сжаты внутри — только wasm, разметка и манифест.
+	AddOutputFilterByType DEFLATE application/wasm
+	AddOutputFilterByType DEFLATE text/html
+	AddOutputFilterByType DEFLATE application/manifest+json
+	AddOutputFilterByType DEFLATE text/plain
+</IfModule>
+
+<IfModule mod_headers.c>
+	# Имена без хэша: при замене шрифта или декодера переименуйте файл,
+	# иначе у вернувшихся посетителей год будет висеть старая версия.
+	<FilesMatch "\.(woff2|wasm)$">
+		Header set Cache-Control "public, max-age=31536000, immutable"
+	</FilesMatch>
+
+	<FilesMatch "\.(webp|glb|ico|webmanifest)$">
+		Header set Cache-Control "public, max-age=2592000"
+	</FilesMatch>
+
+	# HTML переписывается каждым деплоем — только ревалидация.
+	<FilesMatch "\.html$">
+		Header set Cache-Control "public, max-age=0, must-revalidate"
+	</FilesMatch>
+</IfModule>

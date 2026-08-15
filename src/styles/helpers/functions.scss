@@ -19,7 +19,7 @@
 
   @return clamp(
     #{$minSize * 1rem},
-    #{$yAxisIntersections * 1rem} + #{$slope * 100vw},
+    #{$yAxisIntersections * 1rem} + #{$slope} * var(--fluid-viewport-width, 100vw),
     #{$maxSize * 1rem}
   );
 }

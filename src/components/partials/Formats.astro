@@ -64,8 +64,12 @@ const slides = [
 
 		&__inner {
 			position: relative;
-			height: 100svh;
-			overflow: hidden;
+
+			@include tablet {
+				height: 100vh;
+				height: 100lvh;
+				overflow: hidden;
+			}
 
 			@media (prefers-reduced-motion: reduce) {
 				height: auto;
