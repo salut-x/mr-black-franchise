@@ -9,3 +9,5 @@ public/3D/
 .env
 .env.*
 !.env.example
+
+raw/

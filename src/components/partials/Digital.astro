@@ -51,7 +51,7 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 					}
 				</ul>
 				<div class='digital__action'>
-					<Button label={t.common.apply} />
+					<Button label={t.common.apply} data-modal-open='request-modal' />
 				</div>
 			</div>
 		</div>
@@ -90,9 +90,13 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 
 			@include desktop {
 				display: grid;
-				grid-template-columns: 9fr 3fr;
+				grid-template-columns: repeat(12, minmax(0, 1fr));
 				column-gap: 20px;
 				align-items: start;
+				justify-items: stretch;
+				max-width: calc(var(--container-width) + var(--container-padding-x) * 2);
+				margin-inline: auto;
+				padding-inline: var(--container-padding-x);
 			}
 		}
 
@@ -118,6 +122,9 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 				position: sticky;
 				top: 0;
 				min-height: 100svh;
+				grid-column: 1 / span 6;
+				max-width: none;
+				padding-inline: 0;
 			}
 		}
 
@@ -125,6 +132,17 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 			width: 100%;
 			padding-bottom: 130px;
 			transition: opacity var(--transition-duration-longer) ease;
+
+			@include desktop {
+				grid-column: 10 / span 3;
+			}
+
+			.container {
+				@include desktop {
+					max-width: none;
+					padding-inline: 0;
+				}
+			}
 
 			@include mobile-only {
 				position: relative;
@@ -136,6 +154,12 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 				position: relative;
 				z-index: 1;
 				background: var(--color-ivory);
+			}
+		}
+
+		:global(.benefits__inner) {
+			@include desktop {
+				padding-inline: 0;
 			}
 		}
 
@@ -214,7 +238,8 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 			@include desktop {
 				align-items: end;
 				margin-top: auto;
-				margin-left: calc(35% + 24px);
+				margin-left: 0;
+				width: calc(200% + 20px);
 			}
 		}
 
@@ -251,7 +276,7 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 			height: fluid(610, 336);
 			aspect-ratio: 348 / 610;
 			translate: calc(#{fluid(60, 42)} + 20px) -80px;
-			animation: digital-phone-sway 10s ease-in-out infinite;
+			animation: digital-phone-sway 5s ease-in-out infinite;
 
 			@include desktop {
 				translate: calc(#{fluid(60, 42)} + 20px) -130px;
@@ -298,18 +323,28 @@ const digital = t.digital.cards.map(([title, description], index) => ({ icon: `d
 
 		if (!source) return
 
+		const ensurePlaying = () => {
+			if (!video.src) video.src = source
+			if (video.paused) video.play().catch(() => undefined)
+		}
+
 		const videoObserver = new IntersectionObserver(
 			entries => {
 				if (!entries.some(entry => entry.isIntersecting)) return
 
-				videoObserver.disconnect()
-				video.src = source
-				video.play().catch(() => undefined)
+				ensurePlaying()
 			},
 			{ rootMargin: '200px 0px' }
 		)
 
 		videoObserver.observe(video)
+
+		// Мобильные браузеры глушат видео при уходе со вкладки и при экономии
+		// энергии — поднимаем обратно, чтобы луп не вставал насовсем.
+		video.addEventListener('pause', ensurePlaying)
+		document.addEventListener('visibilitychange', () => {
+			if (!document.hidden) ensurePlaying()
+		})
 	})
 
 	document.querySelectorAll<HTMLElement>('[data-digital]').forEach(section => {

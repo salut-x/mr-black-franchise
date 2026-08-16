@@ -17,10 +17,6 @@ class CupSection {
 		model: '[data-js-cup-view]',
 	}
 
-	stateClasses = {
-		landed: 'is-landed',
-	}
-
 	materialNames = {
 		cup: ['Paper', 'Cup Edge'],
 		logo: ['Cup Logo Material', 'Cup Back Logo Material'],
@@ -33,7 +29,7 @@ class CupSection {
 		logoRotation: 350,
 		spin: 360,
 		offscreenGap: 20,
-		pinMaxWidth: 768,
+		flatMaxWidth: 768,
 		modelFrameDuration: 1000 / 30,
 	}
 
@@ -90,17 +86,7 @@ class CupSection {
 			this.updateMetrics()
 		}
 
-		const { pinOffset, landedProgress } = this.metrics
-
-		this.rootElement.classList.toggle(
-			this.stateClasses.landed,
-			pinOffset !== null && self.progress >= landedProgress,
-		)
-		this.render(
-			pinOffset === null
-				? self.progress
-				: this.getMobilePinProgress(self.progress),
-		)
+		this.render(self.progress)
 	}
 
 	onScrollTriggerRefresh = self => {
@@ -117,6 +103,16 @@ class CupSection {
 		}
 
 		this.requestModelRotation(this.getRotationAt(progress))
+	}
+
+	/** Ниже этой ширины секция рисует CupStill, а WebGL не поднимается вовсе. */
+	isFlat() {
+		const { cupFlatMaxWidth } = this.rootElement.dataset
+
+		return (
+			window.innerWidth <
+			(Number(cupFlatMaxWidth) || this.animation.flatMaxWidth)
+		)
 	}
 
 	requestModelRotation(rotation) {
@@ -262,26 +258,6 @@ class CupSection {
 		})
 	}
 
-	getPinOffset(modelHeight, viewportHeight) {
-		const { cupPinTop, cupPinMaxWidth } = this.rootElement.dataset
-		const pinTop = Number(cupPinTop)
-		const pinMaxWidth = Number(cupPinMaxWidth) || this.animation.pinMaxWidth
-
-		if (!pinTop || window.innerWidth >= pinMaxWidth) {
-			return null
-		}
-
-		return pinTop + modelHeight / 2 - viewportHeight / 2
-	}
-
-	getMobilePinProgress(progress) {
-		return gsap.utils.clamp(
-			0,
-			1,
-			progress * this.metrics.mobileProgressScale,
-		)
-	}
-
 	/**
 	 * Границы фаз в прогрессе триггера: влёт занимает первый экран прокрутки,
 	 * вылет — последний, между ними стакан висит по центру вьюпорта сколько бы
@@ -296,16 +272,7 @@ class CupSection {
 	}
 
 	getOffsetAt(progress) {
-		const {
-			enterEnd,
-			exitStart,
-			offscreenOffset,
-			pinOffset,
-		} = this.metrics
-
-		if (pinOffset !== null) {
-			return gsap.utils.interpolate(-offscreenOffset, pinOffset, progress)
-		}
+		const { enterEnd, exitStart, offscreenOffset } = this.metrics
 
 		if (progress <= enterEnd) {
 			return gsap.utils.interpolate(-offscreenOffset, 0, progress / enterEnd)
@@ -341,11 +308,8 @@ class CupSection {
 		this.metrics = {
 			enterEnd,
 			exitStart,
-			landedProgress: viewportRatio,
-			mobileProgressScale: triggerDistance / viewportHeight,
 			offscreenOffset:
 				(viewportHeight + modelHeight) / 2 + this.animation.offscreenGap,
-			pinOffset: this.getPinOffset(modelHeight, viewportHeight),
 		}
 	}
 
@@ -391,6 +355,10 @@ class CupSection {
 			return
 		}
 
+		if (this.isFlat()) {
+			return
+		}
+
 		window.addEventListener('load', this.onWindowLoad, { once: true })
 		this.initScrollAnimation()
 		await this.whenNearViewport()
@@ -415,7 +383,6 @@ class CupSection {
 		this.viewerObserver?.disconnect()
 		window.clearTimeout(this.modelUpdateTimer)
 		this.cameraParallax?.destroy()
-		this.rootElement.classList.remove(this.stateClasses.landed)
 		this.scrollTrigger?.kill()
 	}
 }

@@ -1,0 +1,230 @@
+---
+import cupForm from '@/assets/images/cup-form.png'
+import { getCopy } from '@/data/i18n.js'
+import CupStill from './CupStill.astro'
+import Form from './Form.astro'
+
+const t = getCopy(Astro.url.pathname)
+---
+
+<dialog
+	class='modal'
+	id='request-modal'
+	aria-label={t.cta.title}
+>
+	<div class='modal__screen'>
+		<div
+			class='modal__inner container'
+			tabindex='-1'
+			autofocus
+		>
+			<button
+				class='modal__close'
+				type='button'
+				aria-label={t.a11y.close}
+				data-modal-close
+			>
+				<span
+					class='modal__dots'
+					aria-hidden='true'
+				>
+					{Array.from({ length: 5 }, () => <span class='modal__dot' />)}
+				</span>
+			</button>
+
+			<div class='modal__side'>
+				<div class='modal__header'>
+					<h2 class='modal__title h3'>{t.cta.title}</h2>
+					<p class='modal__description txt-md'>{t.cta.description}</p>
+				</div>
+
+				<span class='modal__tag txt-btn hidden-mobile hidden-tablet'
+					>@MR_BLACK</span
+				>
+			</div>
+
+			<CupStill
+				image={cupForm}
+				width={420}
+				class='modal__cup hidden-mobile hidden-tablet'
+			/>
+
+			<div class='modal__body'>
+				<p class='modal__hint txt-btn'>{t.cta.hint}</p>
+				<Form
+					idPrefix='modal-'
+					submitLabel={t.form.submit}
+				/>
+			</div>
+		</div>
+	</div>
+</dialog>
+
+<style lang='scss'>
+	.modal {
+		width: 100%;
+		max-width: 100%;
+		height: 100%;
+		max-height: 100%;
+		background: var(--color-orange);
+		color: var(--color-black);
+		overscroll-behavior: contain;
+		overflow-y: auto;
+		// Шторка сверху вниз, как у мобильного меню.
+		clip-path: inset(0 0 100% 0);
+		transition:
+			clip-path 0.5s ease-out,
+			display 0.5s allow-discrete,
+			overlay 0.5s allow-discrete;
+
+		&[open] {
+			clip-path: inset(0 0 0 0);
+		}
+
+		@starting-style {
+			&[open] {
+				clip-path: inset(0 0 100% 0);
+			}
+		}
+
+		&::backdrop {
+			background: transparent;
+		}
+
+		&__screen {
+			display: flex;
+			align-items: center;
+			min-height: 100%;
+		}
+
+		&__inner {
+			--modal-padding-y: #{fluid(40, 60)};
+
+			position: relative;
+			display: grid;
+			row-gap: 40px;
+			padding-block: var(--modal-padding-y);
+			outline: none;
+
+			@include desktop {
+				align-self: stretch;
+				grid-template-columns: 8fr 4fr;
+				column-gap: 20px;
+				row-gap: 20px;
+			}
+		}
+
+		&__close {
+			position: absolute;
+			top: calc((68px - 32px) / 2);
+			right: calc(var(--container-padding-x) - 8px);
+			padding: 8px;
+			border: none;
+			background: transparent;
+			color: inherit;
+			cursor: pointer;
+
+			@include desktop {
+				top: calc(20px + (65px - 32px) / 2);
+			}
+
+			&:focus-visible {
+				outline: 2px dashed currentColor;
+				outline-offset: 4px;
+			}
+		}
+
+		&__dots {
+			display: grid;
+			grid-template-columns: repeat(3, 4px);
+			grid-template-rows: repeat(3, 4px);
+			gap: 2px;
+			transition: transform var(--transition-duration);
+		}
+
+		&__close:hover &__dots {
+			transform: rotate(45deg);
+		}
+
+		&__dot {
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+			background-color: currentColor;
+
+			&:nth-child(1) {
+				grid-area: 1 / 1;
+			}
+
+			&:nth-child(2) {
+				grid-area: 1 / 3;
+			}
+
+			&:nth-child(3) {
+				grid-area: 2 / 2;
+			}
+
+			&:nth-child(4) {
+				grid-area: 3 / 1;
+			}
+
+			&:nth-child(5) {
+				grid-area: 3 / 3;
+			}
+		}
+
+		&__side {
+			display: contents;
+
+			@include desktop {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				grid-column: 1;
+				grid-row: 1;
+				row-gap: 40px;
+			}
+		}
+
+		&__header {
+			display: flex;
+			flex-direction: column;
+			align-items: start;
+			row-gap: fluid(30, 20);
+			max-width: 650px;
+		}
+
+		&__description {
+			max-width: 471px;
+		}
+
+		:global(.modal__cup) {
+			@include desktop {
+				position: absolute;
+				inset: 0;
+				height: min(48vh, 460px);
+				margin: auto;
+			}
+		}
+
+		&__body {
+			display: grid;
+			row-gap: 40px;
+
+			@include desktop {
+				align-content: end;
+				grid-column: 2;
+				grid-row: 1;
+			}
+		}
+
+		&__hint {
+			opacity: 0.55;
+		}
+
+		&__tag {
+			order: 1;
+			opacity: 0.55;
+		}
+	}
+</style>

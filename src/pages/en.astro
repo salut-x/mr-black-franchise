@@ -9,6 +9,7 @@ import Digital from '@/components/partials/Digital.astro'
 import Package from '@/components/partials/Package.astro'
 import StickyGallery from '@/components/partials/StickyGallery.astro'
 import CupSection from '@/components/ui/CupSection.astro'
+import CupSequence from '@/components/ui/CupSequence.astro'
 import Layout from '@/layouts/BaseLayout.astro'
 ---
 
@@ -22,19 +23,20 @@ import Layout from '@/layouts/BaseLayout.astro'
 		<div class='hero-transition__model-layer'>
 			<div class='hero-transition__model-sticky'>
 				<model-viewer class='hero-transition__model' src='/models/cup.glb' alt='3D model of a Mr.BLACK coffee cup' camera-orbit='-20deg 75deg auto' field-of-view='30deg' interaction-prompt='none' orientation='0deg 0deg 0deg' shadow-intensity='0' loading='eager' data-js-hero-model-view></model-viewer>
+				<CupSequence />
 			</div>
 		</div>
 		<Hero />
 		<Features />
 		<Formats />
-		<CupSection color='--color-ivory' logo='/models/logo-cup-3.webp' alt='3D model of a branded Mr.BLACK coffee cup' pinTop={300}>
+		<CupSection color='--color-ivory' logo='/models/logo-cup-3.webp' alt='3D model of a branded Mr.BLACK coffee cup'>
 			<Package />
 		</CupSection>
 		<KeyTerms />
 		<Digital />
 		<StickyGallery />
 		<Faq />
-		<CupSection color='--color-orange' logo='/models/logo-cup-4.webp' alt='3D model of an orange Mr.BLACK coffee cup' pinTop={240} pinMaxWidth={1024}>
+		<CupSection color='--color-salmon' logo='/models/logo-cup-4.webp' alt='3D model of an orange Mr.BLACK coffee cup' flatMaxWidth={1024}>
 			<CtaForm />
 		</CupSection>
 	</div>
@@ -69,12 +71,9 @@ import Layout from '@/layouts/BaseLayout.astro'
 			will-change: transform;
 			--poster-color: transparent;
 
+			// До 768px hero рисует CupSequence — модель не показываем и не грузим.
 			@include mobile-only {
-				--hero-model-scale: 1.3;
-				--hero-model-start-y: 10px;
-
-				width: 273px;
-				height: 273px;
+				display: none;
 			}
 			@include tablet-only { --hero-model-scale: 0.9; }
 		}

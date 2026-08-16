@@ -5,8 +5,8 @@ import formatImage2 from '@/assets/images/formats/2-1.jpg'
 import formatImage22 from '@/assets/images/formats/2-2.jpg'
 import formatImage3 from '@/assets/images/formats/3-1.jpg'
 import formatImage32 from '@/assets/images/formats/3-2.jpg'
-import FormatSlide from '../ui/FormatSlide.astro'
 import { getCopy } from '@/data/i18n.js'
+import FormatSlide from '../ui/FormatSlide.astro'
 
 const t = getCopy(Astro.url.pathname)
 
@@ -16,7 +16,10 @@ const slides = [
 		title: 'To go',
 		description: t.formats[0].description,
 		number: '01',
-		metrics: t.formats[0].metrics.map(([caption, point]) => ({ caption, point })),
+		metrics: t.formats[0].metrics.map(([caption, point]) => ({
+			caption,
+			point
+		})),
 		minimage: formatImage12,
 		background: 'var(--color-ivory)'
 	},
@@ -25,18 +28,24 @@ const slides = [
 		title: 'LOUNGE',
 		number: '02',
 		description: t.formats[1].description,
-		metrics: t.formats[1].metrics.map(([caption, point]) => ({ caption, point })),
+		metrics: t.formats[1].metrics.map(([caption, point]) => ({
+			caption,
+			point
+		})),
 		minimage: formatImage22,
-		background: 'var(--color-white)'
+		background: 'var(--color-green)'
 	},
 	{
 		image: formatImage3,
 		title: 'specialty',
 		number: '03',
 		description: t.formats[2].description,
-		metrics: t.formats[2].metrics.map(([caption, point]) => ({ caption, point })),
+		metrics: t.formats[2].metrics.map(([caption, point]) => ({
+			caption,
+			point
+		})),
 		minimage: formatImage32,
-		background: 'var(--color-green)'
+		background: 'var(--color-brown)'
 	}
 ]
 ---

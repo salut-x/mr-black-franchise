@@ -16,7 +16,7 @@ const t = getCopy(Astro.url.pathname)
 			<div class='hero__offer'>
 				<h1 class='hero__title h6'>{t.hero.title}</h1>
 				<p class='hero__description'>{t.hero.description}</p>
-				<Button label={t.common.apply} />
+				<Button label={t.common.apply} data-modal-open='request-modal' />
 			</div>
 			<div class='hero__points'>
 				<ul class='hero__points-list'>
@@ -106,8 +106,9 @@ const t = getCopy(Astro.url.pathname)
 			}
 
 			@include desktop {
-				display: flex;
-				justify-content: space-between;
+				grid-template-columns: repeat(12, minmax(0, 1fr));
+				column-gap: 20px;
+				row-gap: 0;
 			}
 		}
 
@@ -122,6 +123,7 @@ const t = getCopy(Astro.url.pathname)
 			}
 
 			@include desktop {
+				grid-column: 1 / span 10;
 				max-width: 471px;
 				margin-top: 150px;
 			}
@@ -129,6 +131,7 @@ const t = getCopy(Astro.url.pathname)
 
 		&__description {
 			margin-block: 10px 30px;
+      max-width: 334px;
 		}
 
 		&__points {
@@ -141,6 +144,10 @@ const t = getCopy(Astro.url.pathname)
 
 			@include tablet-only {
 				justify-self: end;
+			}
+
+			@include desktop {
+				grid-column: 11 / span 2;
 			}
 
 			&-list {
@@ -268,17 +275,17 @@ const t = getCopy(Astro.url.pathname)
 			transform: translateX(-50%);
 
 			@include tablet-only {
-				top: -55px;
-				width: 320px;
+				top: -48px;
+				width: 280px;
 			}
 
 			@include desktop {
-				top: -50px;
+				top: -21.25%;
 				right: auto;
-				left: 79.16%;
-				width: 300px;
+				left: 79.36%;
+				width: 17.58%;
 				transform-origin: center;
-				animation: hero-cup-float 10s ease-in-out infinite;
+				animation: hero-cup-float 5s ease-in-out infinite;
 			}
 		}
 

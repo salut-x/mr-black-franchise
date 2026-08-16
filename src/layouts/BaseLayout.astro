@@ -1,7 +1,9 @@
 ---
+import CookieBanner from '@/components/partials/CookieBanner.astro'
 import Head from '@/components/partials/Head.astro'
 import Header from '@/components/partials/Header.astro'
 import Footer from '@/components/partials/Footer.astro'
+import Modal from '@/components/ui/Modal.astro'
 import Preloader from '@/components/partials/Preloader.astro'
 import { getLocale } from '@/data/i18n.js'
 
@@ -39,5 +41,7 @@ const {
 			<slot />
 		</main>
 		<Footer />
+		<Modal />
+		<CookieBanner />
 	</body>
 </html>

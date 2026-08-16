@@ -27,6 +27,7 @@ class HeroModel {
 		// тем дольше стакан уезжает вниз.
 		exitOffsetStart: 0.35,
 		offscreenGap: 20,
+		flatMaxWidth: 768,
 		modelFrameDuration: 1000 / 30,
 	}
 
@@ -335,8 +336,13 @@ class HeroModel {
 		})
 	}
 
+	/** До 768px hero рисует CupSequence, а WebGL не поднимается вовсе. */
+	isFlat() {
+		return window.innerWidth < this.animation.flatMaxWidth
+	}
+
 	async init() {
-		if (!this.modelElement) {
+		if (!this.modelElement || this.isFlat()) {
 			return
 		}
 

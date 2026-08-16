@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+	/** Статичный кадр стакана: показывается там, где WebGL отключён. */
+	image: ImageMetadata
+	class?: string
+	width?: number
+}
+
+const { image, class: className, width = 220 } = Astro.props
+---
+
+<Image
+	class:list={['cup-still', className]}
+	src={image}
+	alt=''
+	loading='lazy'
+	width={width}
+	densities={[1, 2]}
+/>
+
+<style lang='scss'>
+	// Покачивание взамен вращения, которого статичный кадр дать не может.
+	.cup-still {
+		display: block;
+		width: auto;
+		height: 275px;
+		margin-inline: auto;
+		object-fit: contain;
+
+		@include tablet {
+			height: 190px;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			animation: cup-still-sway 10s ease-in-out infinite;
+		}
+	}
+
+	@keyframes cup-still-sway {
+		0%,
+		100% {
+			transform: rotate(-3deg);
+		}
+
+		50% {
+			transform: rotate(3deg);
+		}
+	}
+</style>

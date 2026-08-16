@@ -1,0 +1,41 @@
+---
+/**
+ * Пререндер-секвенция стакана вместо WebGL до 768px: те же поворот, смена
+ * логотипа и уход цвета, но нулевой TBT вместо model-viewer с three.js.
+ */
+const frames = Object.entries(
+	import.meta.glob<string>('@/assets/sequence/*.webp', {
+		eager: true,
+		query: '?url',
+		import: 'default',
+	}),
+)
+	.sort(([a], [b]) => a.localeCompare(b))
+	.map(([, url]) => url)
+---
+
+<canvas
+	class='cup-sequence'
+	width='340'
+	height='443'
+	aria-hidden='true'
+	data-js-cup-sequence
+	data-frames={JSON.stringify(frames)}
+>
+</canvas>
+
+<style lang='scss'>
+	.cup-sequence {
+		display: none;
+
+		// Размер и сдвиг подобраны так, чтобы кадр встал ровно туда же,
+		// где до 768px стояла 3D-модель.
+		@include mobile-only {
+			display: block;
+			width: auto;
+			height: 71vmin;
+			transform: translateY(19px);
+			pointer-events: none;
+		}
+	}
+</style>

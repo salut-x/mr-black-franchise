@@ -10,10 +10,12 @@ const t = getCopy(Astro.url.pathname)
 
 interface Props extends FormHTMLAttributes {
 	submitLabel?: string
+	idPrefix?: string
 }
 
 const {
 	submitLabel = t.form.submit,
+	idPrefix = '',
 	class: className,
 	...attributes
 } = Astro.props
@@ -27,6 +29,7 @@ const {
 	<Input
 		label={t.form.name}
 		name='name'
+		id={`${idPrefix}name`}
 		placeholder={t.form.namePlaceholder}
 		autocomplete='name'
 		required
@@ -34,6 +37,7 @@ const {
 	<Input
 		label={t.form.email}
 		name='email'
+		id={`${idPrefix}email`}
 		type='email'
 		placeholder='mr.black@gmail.com'
 		autocomplete='email'
@@ -43,6 +47,7 @@ const {
 	<Input
 		label={t.form.phone}
 		name='phone'
+		id={`${idPrefix}phone`}
 		type='tel'
 		placeholder='+7 (931) 000-88-00'
 		autocomplete='tel'
@@ -52,10 +57,12 @@ const {
 	<Input
 		label={t.form.city}
 		name='city'
+		id={`${idPrefix}city`}
 		placeholder={t.form.cityPlaceholder}
 	/>
 	<CheckBox
 		name='consent'
+		id={`${idPrefix}consent`}
 		required
 		data-error={t.form.consentError}
 	>

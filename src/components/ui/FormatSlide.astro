@@ -31,7 +31,10 @@ const { image, title, description, number, minimage, background, metrics } =
 				<div class='format-slide__offer'>
 					<h2 class='format-slide__title h3'>{title}</h2>
 					<p class='format-slide__description txt-md'>{description}</p>
-					<Button label={t.common.apply} />
+					<Button
+						label={t.common.apply}
+						data-modal-open='request-modal'
+					/>
 					<span class='format-slide__number txt-bold'>
 						{number}<span class='format-slide__number--light'>/03</span>
 					</span>
@@ -155,6 +158,7 @@ const { image, title, description, number, minimage, background, metrics } =
 
 		&__description {
 			margin-block: 16px 32px;
+			max-width: 410px;
 
 			@include tablet {
 				margin-top: 20px;
@@ -162,6 +166,7 @@ const { image, title, description, number, minimage, background, metrics } =
 
 			@include desktop {
 				margin-block: 30px 110px;
+				max-width: 500px;
 			}
 		}
 

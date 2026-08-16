@@ -102,6 +102,7 @@ const { title, number, class: className, ...attributes } = Astro.props
 			padding: 0 0 36px;
 			box-sizing: border-box;
 			overflow: hidden;
+			opacity: 60%;
 
 			@include mobile-only {
 				grid-template-columns: 48px minmax(0, 1fr) 16px;
@@ -116,7 +117,8 @@ const { title, number, class: className, ...attributes } = Astro.props
 			transform: translateY(12px);
 			transition:
 				opacity var(--transition-duration-longer) ease,
-				transform var(--transition-duration-longer) cubic-bezier(0.22, 1, 0.36, 1);
+				transform var(--transition-duration-longer)
+					cubic-bezier(0.22, 1, 0.36, 1);
 		}
 
 		&[data-expanded='true'] &__content-inner {
@@ -132,13 +134,19 @@ const { title, number, class: className, ...attributes } = Astro.props
 </style>
 
 <script>
-	const accordions = document.querySelectorAll<HTMLDetailsElement>('[data-js-accordion]')
+	const accordions = document.querySelectorAll<HTMLDetailsElement>(
+		'[data-js-accordion]'
+	)
 	const duration = 600
 	const easing = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
 	accordions.forEach(accordion => {
-		const summary = accordion.querySelector<HTMLElement>('[data-js-accordion-summary]')
-		const content = accordion.querySelector<HTMLElement>('[data-js-accordion-content]')
+		const summary = accordion.querySelector<HTMLElement>(
+			'[data-js-accordion-summary]'
+		)
+		const content = accordion.querySelector<HTMLElement>(
+			'[data-js-accordion-content]'
+		)
 
 		if (!summary || !content) return
 
@@ -159,7 +167,8 @@ const { title, number, class: className, ...attributes } = Astro.props
 			if (!accordion.open && !animation) return
 
 			const startHeight = accordion.getBoundingClientRect().height
-			const endHeight = summary.offsetHeight + accordion.offsetHeight - accordion.clientHeight
+			const endHeight =
+				summary.offsetHeight + accordion.offsetHeight - accordion.clientHeight
 			animation?.cancel()
 			isClosing = true
 			accordion.dataset.expanded = 'false'
@@ -167,10 +176,7 @@ const { title, number, class: className, ...attributes } = Astro.props
 			accordion.style.overflow = 'hidden'
 
 			const currentAnimation = accordion.animate(
-				[
-					{ height: `${startHeight}px` },
-					{ height: `${endHeight}px` }
-				],
+				[{ height: `${startHeight}px` }, { height: `${endHeight}px` }],
 				{ duration, easing, fill: 'forwards' }
 			)
 			animation = currentAnimation
@@ -191,10 +197,7 @@ const { title, number, class: className, ...attributes } = Astro.props
 			accordion.style.overflow = 'hidden'
 
 			const currentAnimation = accordion.animate(
-				[
-					{ height: `${startHeight}px` },
-					{ height: `${endHeight}px` }
-				],
+				[{ height: `${startHeight}px` }, { height: `${endHeight}px` }],
 				{ duration, easing, fill: 'forwards' }
 			)
 			animation = currentAnimation
@@ -214,11 +217,13 @@ const { title, number, class: className, ...attributes } = Astro.props
 			}
 
 			const group = accordion.closest('[data-js-accordion-list]')
-			group?.querySelectorAll<HTMLDetailsElement>(':scope > [data-js-accordion]').forEach(item => {
-				if (item !== accordion && item.open) {
-					item.dispatchEvent(new CustomEvent('accordion:close'))
-				}
-			})
+			group
+				?.querySelectorAll<HTMLDetailsElement>(':scope > [data-js-accordion]')
+				.forEach(item => {
+					if (item !== accordion && item.open) {
+						item.dispatchEvent(new CustomEvent('accordion:close'))
+					}
+				})
 
 			open()
 		})

@@ -5,28 +5,24 @@ interface Props {
 	/** webp-декаль поверх зашитой в GLB. Без неё остаётся hero-логотип. */
 	logo?: string
 	alt?: string
-	/** Стакан не улетает вниз, а садится в этом отступе сверху, px. */
-	pinTop?: number
-	/** Ширина, с которой pinTop отключается. По умолчанию 768 — только мобилка. */
-	pinMaxWidth?: number
+	/** Ширина, ниже которой WebGL не поднимается: там секция рисует CupStill. */
+	flatMaxWidth?: number
 }
 
 const {
 	color,
 	logo,
 	alt = '3D-модель стакана кофе Mr.BLACK',
-	pinTop,
-	pinMaxWidth,
+	flatMaxWidth = 768,
 } = Astro.props
 ---
 
 <div
-	class='cup-section'
+	class:list={['cup-section', `cup-section--flat-to-${flatMaxWidth}`]}
 	data-js-cup-section
 	data-cup-color={color}
 	data-cup-logo={logo}
-	data-cup-pin-top={pinTop}
-	data-cup-pin-max-width={pinMaxWidth}
+	data-cup-flat-max-width={flatMaxWidth}
 >
 	<div class='cup-section__layer'>
 		<div class='cup-section__sticky'>
@@ -57,6 +53,19 @@ const {
 			// когда низ группы дойдёт до верха вьюпорта — это и есть end триггера.
 			inset: 0 0 -100svh;
 			pointer-events: none;
+		}
+
+		// Ниже брейкпоинта летящего стакана нет: секция рисует CupStill в потоке.
+		&--flat-to-768 &__layer {
+			@include mobile-only {
+				display: none;
+			}
+		}
+
+		&--flat-to-1024 &__layer {
+			@media (width < 1024px) {
+				display: none;
+			}
 		}
 
 		&__sticky {
@@ -94,11 +103,6 @@ const {
 
 		&__model::part(default-progress-bar) {
 			display: none;
-		}
-
-		&.is-landed &__sticky {
-			position: absolute;
-			inset: 0 0 auto;
 		}
 	}
 </style>

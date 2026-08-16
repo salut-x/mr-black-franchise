@@ -1,0 +1,71 @@
+---
+import Button from '@/components/ui/Button.astro'
+import { getCopy } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+---
+
+<aside
+	class='cookie-banner'
+	role='region'
+	aria-label={t.cookies.label}
+	data-js-cookie-banner
+	hidden
+>
+	<p class='cookie-banner__text body-txt'>{t.cookies.text}</p>
+	<Button
+		label={t.cookies.accept}
+		data-js-cookie-accept
+	/>
+</aside>
+
+<style lang='scss'>
+	.cookie-banner {
+		position: fixed;
+		z-index: 100;
+		bottom: var(--container-padding-x);
+		right: var(--container-padding-x);
+		display: grid;
+		justify-items: start;
+		row-gap: 40px;
+		width: fit-content;
+		// Процент от вьюпорта, а не 100vw: иначе ширина считается вместе
+		// с полосой прокрутки и панель вылезает за левый край.
+		max-width: calc(100% - var(--container-padding-x) * 2);
+		padding: 16px;
+		border: 1px dashed
+			color-mix(in srgb, var(--color-black) 25%, transparent);
+		background: var(--color-ivory);
+		color: var(--color-black);
+
+		&__text {
+			max-width: 350px;
+		}
+
+		&[hidden] {
+			display: none;
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			animation: cookie-banner-in var(--transition-duration-longer) ease both;
+		}
+	}
+
+	@keyframes cookie-banner-in {
+		from {
+			opacity: 0;
+			transform: translateY(16px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
+
+<script>
+	import initCookieBanner from '@/scripts/modules/CookieBanner.js'
+
+	initCookieBanner()
+</script>

@@ -57,7 +57,7 @@ const features = t.features
 
 		&__title {
 			@include tablet {
-				max-width: 500px;
+				max-width: 600px;
 			}
 		}
 
@@ -71,6 +71,12 @@ const features = t.features
 				flex-direction: row;
 				justify-content: space-between;
 				margin-top: 90px;
+			}
+
+			@include desktop {
+				display: grid;
+				grid-template-columns: repeat(12, minmax(0, 1fr));
+				column-gap: 20px;
 			}
 		}
 
@@ -86,7 +92,8 @@ const features = t.features
 				}
 
 				@include desktop {
-					max-width: 370px;
+					grid-column: 1 / span 3;
+					max-width: none;
 				}
 			}
 			&--right {
@@ -100,7 +107,8 @@ const features = t.features
 				}
 
 				@include desktop {
-					max-width: 370px;
+					grid-column: 10 / span 3;
+					max-width: none;
 				}
 			}
 		}

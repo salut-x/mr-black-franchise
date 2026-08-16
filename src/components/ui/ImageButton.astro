@@ -48,12 +48,12 @@ const {
 <style lang='scss'>
 	.image-button {
 		display: flex;
-		grid-template-columns: minmax(120px, 30%) 1fr auto;
 		align-items: center;
-		gap: 12px;
-		width: 240px;
-		padding: 5px;
+		gap: 0.8em;
+		width: var(--image-button-width, 230px);
+		padding: 0.3333em;
 		border: none;
+		font-size: var(--image-button-font-size, 15px);
 		cursor: pointer;
 
 		&__wrapper {
@@ -75,29 +75,30 @@ const {
 
 		&__image {
 			display: block;
-			width: 70px;
-			height: 55px;
+			width: 4.6667em;
+			height: 3.6667em;
 			object-fit: cover;
 		}
 
 		&__label {
 			justify-self: center;
+			font-size: inherit;
 			transition: transform var(--transition-duration-longer)
 				cubic-bezier(0.22, 1, 0.36, 1);
-			padding-top: 4px;
+			padding-top: 0.2667em;
 		}
 
 		&__icons {
 			position: relative;
 			margin-left: auto;
-			width: 9px;
-			height: 15px;
-			margin-right: 7px;
+			width: 0.6em;
+			height: 1em;
+			margin-right: 0.4667em;
 		}
 
 		:global(.image-button__icon) {
-			width: 9px;
-			height: 15px;
+			width: 0.6em;
+			height: 1em;
 		}
 
 		:global(.image-button__icon--start) {
@@ -105,7 +106,7 @@ const {
 			left: 0;
 			top: 50%;
 			opacity: 0;
-			transform: translate(-8px, -50%);
+			transform: translate(-0.5333em, -50%);
 			transition:
 				transform var(--transition-duration-longer) cubic-bezier(0.22, 1, 0.36, 1),
 				opacity 160ms ease;
@@ -131,11 +132,11 @@ const {
 
 		&:hover:not(:disabled) :global(.image-button__icon--end) {
 			opacity: 0;
-			transform: translateX(8px);
+			transform: translateX(0.5333em);
 		}
 
 		&:hover:not(:disabled) &__label {
-			transform: translateX(21px);
+			transform: translateX(1.4em);
 		}
 
 		&:focus-visible {

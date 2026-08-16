@@ -85,6 +85,7 @@ const questions = t.faq.map(([title, answer], index) => ({ number: `${String(ind
 		background: var(--color-black);
 		color: var(--color-ivory);
 		z-index: 100;
+		container-type: inline-size;
 
 		@include tablet-only {
 			height: 100vh;
@@ -148,11 +149,15 @@ const questions = t.faq.map(([title, answer], index) => ({ number: `${String(ind
 
 	:global(.faq__cup) {
 		position: absolute;
-		right: -0.42em;
-		bottom: calc(0.4em + 20px);
+		right: -0.15em;
+		bottom: calc(0.4em + 45px);
 		width: 1.57em;
 		aspect-ratio: 320 / 124;
-		animation: faq-cup-float 10s ease-in-out infinite;
+		animation: faq-cup-float 5s ease-in-out infinite;
+
+		@include desktop {
+			width: calc((100cqi - var(--container-padding-x) * 2) * 0.1758);
+		}
 	}
 
 	:global(.faq__cup .icon__svg) {

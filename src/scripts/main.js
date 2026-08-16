@@ -1,4 +1,6 @@
+import initBreakpointReload from './modules/BreakpointReload.js'
 import CupSectionCollection from './modules/CupSection.js'
+import CupSequenceCollection from './modules/CupSequence.js'
 import FooterBrandCollection from './modules/FooterBrand.js'
 import initForms from './modules/Form.js'
 import FormatsCollection from './modules/Formats.js'
@@ -9,6 +11,7 @@ import initPackageImages from './modules/Package.js'
 import SmoothScroll from './modules/SmoothScroll.js'
 import './modules/Modal.js'
 
+initBreakpointReload()
 new SmoothScroll()
 initHeader()
 initMainMenus()
@@ -18,3 +21,4 @@ new FooterBrandCollection()
 new FormatsCollection()
 new HeroModelCollection()
 new CupSectionCollection()
+new CupSequenceCollection()
