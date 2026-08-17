@@ -54,11 +54,11 @@ const safeRel = target === '_blank' && !rel ? 'noopener noreferrer' : rel
 			background-color: currentColor;
 			transform: scaleX(0);
 			transform-origin: right;
-			transition: transform var(--transition-duration-longer) ease;
+			transition: transform var(--transition-duration) ease;
 		}
 
 		@include hover {
-			color: var(--color-orange);
+			color: var(--link-hover-color, var(--color-orange));
 		}
 
 		&:hover::after {

@@ -6,6 +6,7 @@ interface Props extends ButtonHTMLAttributes {
 	type?: 'button' | 'submit' | 'reset'
 	label: string
 	labelClass?: string
+	href?: string
 }
 
 const {
@@ -13,12 +14,16 @@ const {
 	class: className,
 	label,
 	labelClass,
+	href,
 	...attributes
 } = Astro.props
+
+const Tag = href ? 'a' : 'button'
 ---
 
-<button
-	type={type}
+<Tag
+	type={href ? undefined : type}
+	href={href}
 	class:list={['button', className]}
 	{...attributes}
 >
@@ -40,7 +45,7 @@ const {
 	>
 		{label}
 	</span>
-</button>
+</Tag>
 
 <style lang='scss'>
 	.button {

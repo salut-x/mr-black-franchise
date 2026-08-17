@@ -3,7 +3,6 @@ import {
 	footerContacts as rawFooterContacts,
 	footerCredits,
 	footerLegalLinks,
-	footerPartnerEmail,
 	footerSocialLinks as rawFooterSocialLinks,
 } from '@/data/footer.js'
 import { getLanguages, getLocale, getNavigation } from '@/data/i18n.js'
@@ -17,9 +16,9 @@ const mainNavigation = getNavigation(Astro.url.pathname)
 const footerNavigation = mainNavigation.filter(({ href }) => href !== '#contacts')
 const homeHref = locale === 'en' ? '/en' : '/'
 const labels = locale === 'en' ? {
-	phone: 'Phone', email: 'Email', address: 'Address', callback: 'Request a callback', top: 'Back to top', home: 'Home', message: ['Let’s build a business', 'together.'], menu: 'Menu', social: 'Social media', footerNav: 'Footer navigation', credits: ['Designed by', 'Development'], legal: ['Personal data processing', 'Privacy policy']
+	phone: 'Phone', email: 'Email', address: 'Address', callback: 'Request a callback', top: 'Back to top', home: 'Home', disclaimer: '* All information on this page is for reference only. It is not a public offer.', menu: 'Menu', social: 'Social media', footerNav: 'Footer navigation', credits: ['Designed by', 'Development'], legal: ['Personal data processing', 'Privacy policy']
 } : {
-	phone: 'Телефон', email: 'Почта', address: 'Адрес', callback: 'Заказать обратный звонок', top: 'Вернуться наверх', home: 'На главную', message: ['Давайте строить бизнес', 'вместе.'], menu: 'Меню', social: 'Соц сети', footerNav: 'Навигация в футере', credits: ['Задизайнено', 'Разработка'], legal: ['Обработка персональных данных', 'Политика конфиденциальности']
+	phone: 'Телефон', email: 'Почта', address: 'Адрес', callback: 'Заказать обратный звонок', top: 'Вернуться наверх', home: 'На главную', disclaimer: '* Вся информация на странице представлена для ознакомления. Не публичная оферта.', menu: 'Меню', social: 'Соц сети', footerNav: 'Навигация в футере', credits: ['Задизайнено', 'Разработка'], legal: ['Обработка персональных данных', 'Политика конфиденциальности']
 }
 const footerContacts = rawFooterContacts.map(item => ({ ...item }))
 const [phoneContact, emailContact, addressContact] = footerContacts
@@ -91,18 +90,7 @@ const footerSocialLinks = rawFooterSocialLinks.map((item, index) => ({ ...item, 
 				/>
 			</a>
 
-			<p class='footer__message'>
-				<span class='footer__message-line footer__message-text'>
-					{labels.message[0]}
-				</span>
-				<span class='footer__message-line'>
-					<span class='footer__message-text'>{labels.message[1]}</span><Link
-						class='footer__message-link'
-						href={footerPartnerEmail.href}
-						label={footerPartnerEmail.label}
-					/>
-				</span>
-			</p>
+			<p class='footer__message descriptor'>{labels.disclaimer}</p>
 		</div>
 
 		<div class='footer__navigation'>
@@ -207,14 +195,16 @@ const footerSocialLinks = rawFooterSocialLinks.map((item, index) => ({ ...item, 
 		<div class='footer__legal' data-js-footer-legal>
 			<Link
 				class='footer__legal-link footer__legal-link--personal'
-				href={footerLegalLinks[0].href}
+				href='#'
 				label={labels.legal[0]}
+				data-modal-open={footerLegalLinks[0].modal}
 			/>
 			<span class='footer__copyright'>© 2026 Mr.Black</span>
 			<Link
 				class='footer__legal-link footer__legal-link--privacy'
-				href={footerLegalLinks[1].href}
+				href='#'
 				label={labels.legal[1]}
+				data-modal-open={footerLegalLinks[1].modal}
 			/>
 		</div>
 	</div>
@@ -335,19 +325,13 @@ const footerSocialLinks = rawFooterSocialLinks.map((item, index) => ({ ...item, 
 
 		:global(.footer__contact-value),
 		:global(.footer__credit-link),
-		:global(.footer__legal-link),
-		:global(.footer__message-link) {
+		:global(.footer__legal-link) {
 			color: inherit;
 			line-height: inherit;
 		}
 
 		:global(.footer__legal-link) {
 			opacity: 0.5;
-		}
-
-		:global(.footer__message-link) {
-			color: var(--color-orange);
-			opacity: 1;
 		}
 
 		:global(.footer__callback) {
@@ -415,20 +399,13 @@ const footerSocialLinks = rawFooterSocialLinks.map((item, index) => ({ ...item, 
 
 		&__message {
 			width: 100%;
+			opacity: 0.5;
 
 			@include tablet {
 				position: absolute;
 				top: 400px;
 				left: 0;
 			}
-		}
-
-		&__message-line {
-			display: block;
-		}
-
-		&__message-text {
-			opacity: 0.5;
 		}
 
 		&__navigation {
@@ -658,9 +635,10 @@ const footerSocialLinks = rawFooterSocialLinks.map((item, index) => ({ ...item, 
 				width: 166px;
 			}
 			@include desktop {
-				top: -40px;
-				right: 135px;
-				width: 320px;
+				top: -15px;
+				right: 10.6538%;
+				width: 18.5128%;
+				translate: 0 -32.258%;
 			}
 		}
 

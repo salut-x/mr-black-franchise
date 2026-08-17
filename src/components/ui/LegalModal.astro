@@ -1,0 +1,148 @@
+---
+import ModalClose from './ModalClose.astro'
+
+interface LegalSection {
+	title: string
+	paragraphs: string[]
+}
+
+interface Props {
+	id: string
+	closeLabel: string
+	document: {
+		title: string
+		sections: LegalSection[]
+	}
+}
+
+const { id, closeLabel, document } = Astro.props
+---
+
+<dialog
+	class='legal'
+	id={id}
+	aria-label={document.title}
+	data-lenis-prevent
+>
+	<div
+		class='legal__inner container'
+		tabindex='-1'
+		autofocus
+	>
+		<ModalClose
+			class='legal__close'
+			label={closeLabel}
+		/>
+
+		<h2 class='legal__title h6'>{document.title}</h2>
+
+		{
+			document.sections.map(section => (
+				<div class='legal__section'>
+					<h3 class='legal__section-title h7'>{section.title}</h3>
+					<div class='legal__section-body'>
+						{section.paragraphs.map(paragraph => (
+							<p class='legal__paragraph body-txt'>{paragraph}</p>
+						))}
+					</div>
+				</div>
+			))
+		}
+	</div>
+</dialog>
+
+<style lang='scss'>
+	.legal {
+		width: 100%;
+		max-width: 100%;
+		height: 100%;
+		max-height: 100%;
+		background: var(--color-ivory);
+		color: var(--color-black);
+		overscroll-behavior: contain;
+		overflow-y: auto;
+		clip-path: inset(0 0 100% 0);
+		transition:
+			clip-path 0.5s ease-out,
+			display 0.5s allow-discrete,
+			overlay 0.5s allow-discrete;
+
+		&[open] {
+			clip-path: inset(0 0 0 0);
+		}
+
+		@starting-style {
+			&[open] {
+				clip-path: inset(0 0 100% 0);
+			}
+		}
+
+		&::backdrop {
+			background: transparent;
+		}
+
+		&__inner {
+			position: relative;
+			display: grid;
+			row-gap: fluid(80, 40);
+			padding-block: fluid(80, 60) fluid(120, 60);
+			outline: none;
+		}
+
+		:global(.legal__close) {
+			position: absolute;
+			top: calc((68px - 32px) / 2);
+			right: calc(var(--container-padding-x) - 8px);
+
+			@include desktop {
+				top: calc(20px + (65px - 32px) / 2);
+			}
+		}
+
+		&__title {
+			max-width: 700px;
+			text-transform: uppercase;
+		}
+
+		&__section {
+			display: grid;
+			row-gap: 20px;
+			padding-top: fluid(40, 24);
+			border-top: 1px dashed
+				color-mix(in srgb, var(--color-black) 25%, transparent);
+
+			@include tablet {
+				grid-template-columns: repeat(12, minmax(0, 1fr));
+				column-gap: 20px;
+			}
+		}
+
+		&__section-title {
+			text-transform: uppercase;
+			max-width: 500px;
+
+			@include tablet {
+				grid-column: 1 / 9;
+			}
+		}
+
+		&__section-body {
+			display: grid;
+			row-gap: 20px;
+
+			@include tablet {
+				grid-column: 9 / -1;
+			}
+		}
+
+		&__paragraph {
+			max-width: 60ch;
+
+			& + & {
+				padding-top: 20px;
+				border-top: 1px dashed
+					color-mix(in srgb, var(--color-black) 25%, transparent);
+			}
+		}
+	}
+</style>

@@ -8,6 +8,7 @@ document.addEventListener('click', event => {
   if (opener) {
     const modal = document.getElementById(opener.getAttribute('data-modal-open'))
     if (modal) {
+      event.preventDefault()
       document.querySelector('.main-menu.is-open [data-js-main-menu-toggle]')?.click()
       modal.showModal()
       document.documentElement.classList.add(lockClass)

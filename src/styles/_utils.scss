@@ -29,6 +29,12 @@
   }
 }
 
+.reveal-line-mask {
+  overflow: visible clip !important;
+  padding-block: 0.2em;
+  margin-block: -0.2em;
+}
+
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;

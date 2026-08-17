@@ -1,0 +1,113 @@
+---
+import { Image } from 'astro:assets'
+import cupImage from '@/assets/images/404.png'
+import Button from '@/components/ui/Button.astro'
+import Layout from '@/layouts/BaseLayout.astro'
+import { getCopy, getLocale } from '@/data/i18n.js'
+
+const t = getCopy(Astro.url.pathname)
+const homeHref = getLocale(Astro.url.pathname) === 'en' ? '/en' : '/'
+---
+
+<Layout
+	title={t.notFound.title}
+	description={t.notFound.text}
+	headerTheme='light'
+	headerOverlay
+	footer={false}
+>
+	<section
+		class='not-found'
+		data-header-theme='light'
+	>
+		<div class='not-found__inner container'>
+			<div class='not-found__code'>
+				<span class='not-found__digit h1'>4</span>
+				<Image
+					class='not-found__cup'
+					src={cupImage}
+					alt={t.notFound.cupAlt}
+					width={366}
+					densities={[1, 2]}
+					loading='eager'
+				/>
+				<span class='not-found__digit h1'>4</span>
+			</div>
+			<p class='not-found__text txt-btn'>{t.notFound.text}</p>
+			<Button
+				class='not-found__button'
+				href={homeHref}
+				label={t.notFound.back}
+			/>
+		</div>
+	</section>
+</Layout>
+
+<style lang='scss'>
+	.not-found {
+		display: flex;
+		box-sizing: border-box;
+		min-height: 100svh;
+		padding-block: 100px 60px;
+		background-color: var(--color-black);
+		color: var(--color-ivory);
+
+		@include mobile-only {
+			min-height: 844px;
+			padding-block: 90px 40px;
+		}
+
+		&__inner {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: fluid(40, 24);
+		}
+
+		&__code {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: fluid(60, 6);
+
+			@include mobile-only {
+				flex-direction: column;
+				gap: 24px;
+			}
+		}
+
+		&__digit {
+			font-size: fluid(230, 100);
+			line-height: 1;
+		}
+
+		:global(.not-found__cup) {
+			width: fluid(366, 200);
+			height: auto;
+			animation: not-found-float 6s ease-in-out infinite;
+			will-change: transform;
+		}
+
+		&__text {
+			max-width: 34ch;
+			text-align: center;
+			text-wrap: balance;
+		}
+
+		:global(.not-found__button) {
+			justify-self: center;
+		}
+	}
+
+	@keyframes not-found-float {
+		0%,
+		100% {
+			transform: translate3d(0, 0, 0) rotate(-2.5deg);
+		}
+
+		50% {
+			transform: translate3d(0, -22px, 0) rotate(2.5deg);
+		}
+	}
+</style>

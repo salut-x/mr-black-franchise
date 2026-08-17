@@ -9,6 +9,7 @@ import HeroModelCollection from './modules/HeroModel.js'
 import initMainMenus from './modules/Menu.js'
 import initPackageImages from './modules/Package.js'
 import SmoothScroll from './modules/SmoothScroll.js'
+import initTextReveal from './modules/TextReveal.js'
 import './modules/Modal.js'
 
 initBreakpointReload()
@@ -22,3 +23,4 @@ new FormatsCollection()
 new HeroModelCollection()
 new CupSectionCollection()
 new CupSequenceCollection()
+initTextReveal()

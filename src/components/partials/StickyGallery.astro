@@ -3,9 +3,18 @@ import galleryImage1 from '@/assets/images/gallery/g1.jpg'
 import galleryImage2 from '@/assets/images/gallery/g2.jpg'
 import galleryImage3 from '@/assets/images/gallery/g3.jpg'
 import galleryImage4 from '@/assets/images/gallery/g4.jpg'
+import galleryImage5 from '@/assets/images/gallery/G5.jpg'
+import galleryImage6 from '@/assets/images/gallery/G6.jpg'
 import { Image } from 'astro:assets'
 
-const images = [galleryImage1, galleryImage2, galleryImage3, galleryImage4]
+const images = [
+	galleryImage1,
+	galleryImage2,
+	galleryImage3,
+	galleryImage4,
+	galleryImage5,
+	galleryImage6,
+]
 ---
 
 <section class='sticky-gallery' data-header-theme='dark'>
@@ -82,7 +91,7 @@ const images = [galleryImage1, galleryImage2, galleryImage3, galleryImage4]
 
 		&__item--2 &__image {
 			@include desktop {
-				transform: translateY(40px);
+				transform: translate(40px, 40px);
 			}
 		}
 
@@ -92,12 +101,43 @@ const images = [galleryImage1, galleryImage2, galleryImage3, galleryImage4]
 			}
 		}
 
+		&__item--3 &__image {
+			@include desktop {
+				transform: translateX(40px);
+			}
+		}
+
 		&__item--4 {
 			align-self: flex-end;
 			padding-bottom: fluid(56, 24);
 
 			@include desktop {
 				place-items: end center;
+			}
+		}
+
+		&__item--5 {
+			align-self: flex-start;
+
+			@include desktop {
+				place-items: start start;
+				padding-top: fluid(80, 40);
+			}
+		}
+
+		&__item--6 {
+			align-self: flex-end;
+			padding-bottom: fluid(56, 24);
+
+			@include desktop {
+				place-items: end end;
+				padding-bottom: fluid(80, 40);
+			}
+		}
+
+		&__item--6 &__image {
+			@include desktop {
+				transform: translateX(-40px);
 			}
 		}
 

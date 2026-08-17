@@ -76,29 +76,29 @@ export const copy = {
 		formats: [
 			{
 				description:
-					'Идеально для быстрого старта с минимальной площадью (от 4 кв.м).',
+					'Идеально для быстрого старта с минимальной площадью.',
 				metrics: [
-					['инвестиции', 'от 250 000 ₽/мес'],
-					['площадь', 'от 25 м²'],
-					['окупаемость', 'от 1 000 000 ₽']
+					['средняя прибыль', 'от 100 000 ₽/мес* '],
+					['площадь', 'от 2 м²'],
+					['Инвестиции', 'от 1 400 000 ₽*']
 				]
 			},
 			{
 				description:
-					'Полноценная кофейня с комфортной посадкой и атмосферой для встреч и отдыха.',
+					'Кофейня с небольшой посадкой и витриной для десертов. ',
 				metrics: [
-					['инвестиции', 'от 350 000 ₽/мес'],
-					['площадь', 'от 65 м²'],
-					['окупаемость', 'от 2 000 000 ₽']
+					['средняя прибыль', 'от 150 000 ₽/мес*'],
+					['площадь', 'от 30 м²'],
+					['Инвестиции', 'от 1 900 000 ₽*']
 				]
 			},
 			{
 				description:
-					'Формат для ценителей кофе с акцентом на зерно, качество напитков и мастерство бариста.',
+					'Проект с кухней и особыми фото-зонами.',
 				metrics: [
-					['инвестиции', 'от 550 000 ₽/мес'],
-					['площадь', 'от 95 м²'],
-					['окупаемость', 'от 8 000 000 ₽']
+					['средняя прибыль', 'от 270 000 ₽/мес*'],
+					['площадь', 'от 60 м²'],
+					['Инвестиции', 'от 3 000 000 ₽* ']
 				]
 			}
 		],
@@ -232,8 +232,8 @@ export const copy = {
 			phone: 'Телефон*',
 			city: 'Город',
 			cityPlaceholder: 'Москва',
-			consent: 'Согласен с',
-			privacy: 'политикой конфиденциальности',
+			consent: 'Нажимая кнопку, я даю согласие на',
+			privacy: 'обработку персональных данных',
 			consentError: 'Подтвердите согласие',
 			submit: 'Отправить'
 		},
@@ -241,6 +241,12 @@ export const copy = {
 			text: 'Пользуясь нашим сайтом, вы соглашаетесь с тем, что мы используем cookies',
 			accept: 'Понятно',
 			label: 'Уведомление о cookies'
+		},
+		notFound: {
+			title: 'Mr.BLACK | Страница не найдена',
+			text: 'Похоже, этой страницы больше не существует :(',
+			back: 'Вернуться на главную',
+			cupAlt: 'Стакан кофе Mr.BLACK'
 		}
 	},
 	en: {
@@ -452,8 +458,8 @@ export const copy = {
 			phone: 'Phone*',
 			city: 'City',
 			cityPlaceholder: 'London',
-			consent: 'I agree to the',
-			privacy: 'privacy policy',
+			consent: 'By clicking the button, I consent to the',
+			privacy: 'processing of personal data',
 			consentError: 'Please confirm your consent',
 			submit: 'Send'
 		},
@@ -461,6 +467,12 @@ export const copy = {
 			text: 'By using our site, you agree that we use cookies',
 			accept: 'Got it',
 			label: 'Cookie notice'
+		},
+		notFound: {
+			title: 'Mr.BLACK | Page not found',
+			text: 'Looks like this page no longer exists :(',
+			back: 'Back to home',
+			cupAlt: 'Mr.BLACK coffee cup'
 		}
 	}
 }

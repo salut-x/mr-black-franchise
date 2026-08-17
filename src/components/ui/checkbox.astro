@@ -51,7 +51,7 @@ const { name, id = name, class: className, ...attributes } = Astro.props
 	.checkbox {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
+		align-items: flex-start;
 		gap: 10px;
 		width: fit-content;
 		cursor: pointer;
@@ -78,6 +78,7 @@ const { name, id = name, class: className, ...attributes } = Astro.props
 			border: 1px solid color-mix(in srgb, var(--color-black) 50%, transparent);
 			background-color: transparent;
 			flex: none;
+			translate: 0 3px;
 		}
 
 		&__check {
@@ -96,13 +97,22 @@ const { name, id = name, class: className, ...attributes } = Astro.props
 		}
 
 		&__label {
-			display: inline-flex;
-			align-items: center;
+			flex: 1;
+			min-width: 0;
 			translate: 0 2px;
 		}
 
 		:global(.checkbox__link) {
-			text-decoration: none !important;
+			--link-hover-color: currentColor;
+
+			display: inline;
+			width: auto;
+			text-decoration: underline !important;
+			text-underline-offset: 3px;
+		}
+
+		:global(.checkbox__link::after) {
+			content: none;
 		}
 
 		&__control:checked + &__box {
